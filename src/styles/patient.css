@@ -1,0 +1,174 @@
+/* General Styling */
+body, html {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #38ef7d, #11998e);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Dashboard Container */
+  .patient-dashboard {
+    width: 100%;
+    max-width: 900px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Navbar Styling */
+  .navbar {
+    background-color: #11998e;
+    color: white;
+    padding: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    position: relative;
+  }
+  
+  /* Logout Button */
+  .logout-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .logout-button:hover {
+    background-color: #d32f2f;
+  }
+  
+  /* Container Styling */
+  .container {
+    padding: 30px;
+  }
+  
+  /* Heading and Labels */
+  h2 {
+    color: #11998e;
+    margin-bottom: 20px;
+  }
+  
+  label {
+    font-size: 16px;
+  }
+  
+  /* Select Dropdown and Buttons */
+  select, button {
+    margin: 10px 0;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  /* Dropdown */
+  select {
+    width: 200px;
+    background-color: #f1f1f1;
+  }
+  
+  /* Refresh Button */
+  .refresh-button {
+    background-color: #11998e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  .refresh-button:hover {
+    background-color: #0e8c76;
+  }
+  
+  /* Doctor Action Row */
+  .doctor-actions-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+  }
+  
+  .doctor-actions-row:hover {
+    background-color: #eef9f5;
+  }
+  
+  .doctor-id-display {
+    color: #11998e;
+    font-weight: bold;
+  }
+  
+  /* Buttons for Doctor Actions */
+  .doctor-button {
+    background-color: #11998e;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  .doctor-button.view-button {
+    background-color: #4caf50;
+  }
+  
+  .doctor-button.revoke-button {
+    background-color: #f44336;
+  }
+  
+  .doctor-button.accept-button {
+    background-color: #2196f3;
+  }
+  
+  .doctor-button:hover {
+    opacity: 0.9;
+  }
+  
+  /* Loading Spinner */
+  .loading {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #11998e;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+  }
+  
+  /* Spinner Animation */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .doctor-actions-row {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    select {
+      width: 100%;
+    }
+  
+    .logout-button {
+      position: static;
+      margin-top: 10px;
+    }
+  }
+  

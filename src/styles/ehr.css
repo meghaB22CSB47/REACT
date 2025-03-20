@@ -1,0 +1,64 @@
+/* General Page Styling */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #83a4d4, #b6fbff);
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Main Container */
+  div {
+    padding: 20px;
+  }
+  
+  /* Navbar Styling */
+  .navbar {
+    background-color: #0073e6;
+    color: white;
+    padding: 15px;
+    font-size: 24px;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  /* Heading */
+  h2 {
+    color: #005bb5;
+    margin-top: 20px;
+  }
+  
+  /* Loader Styling */
+  .loader {
+    margin: 50px auto;
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #0073e6;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Animation for Loader */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* EHR Data Display */
+  pre {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    overflow-x: auto;
+    color: #333;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  /* Error Message Styling */
+  .error-message {
+    color: #f44336;
+    font-weight: bold;
+  }
+  

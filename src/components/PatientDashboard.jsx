@@ -1,153 +1,154 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./../styles/patient.css";
 
-// Navbar Component
-const Navbar = () => {
+const PatientDashboard = () => {
   const navigate = useNavigate();
+  const [status, setStatus] = useState("Accepted");
+  const [doctors, setDoctors] = useState([]);
+  const [pendingDoctors, setPendingDoctors] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [dataFetched, setDataFetched] = useState({ accepted: false, pending: false });
 
   const handleLogout = () => {
     localStorage.removeItem('jwt');
-    navigate('/');
+    navigate('/login');
   };
 
-  return (
-    <div className="navbar">
-      Electronic Health Record System
-      <button className="logout-button" onClick={handleLogout}>Logout</button>
-    </div>
-  );
-};
-
-const PatientDashboard = () => {
-  const [status, setStatus] = useState('Accepted');
-  const [acceptedDoctors, setAcceptedDoctors] = useState([]);
-  const [pendingRequests, setPendingRequests] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  // Toggle Data Fetching
   useEffect(() => {
-    if (status === 'Accepted') {
-      fetchDoctorData();
-    } else if (status === 'Pending') {
-      fetchPendingRequests();
-    }
+    toggleDoctorActions();
   }, [status]);
 
-  // Fetch Accepted Doctors
+  const toggleDoctorActions = () => {
+    if (status === "Accepted" && !dataFetched.accepted) {
+      fetchDoctorData();
+    } else if (status === "Pending" && !dataFetched.pending) {
+      fetchPendingRequests();
+    }
+  };
+
   const fetchDoctorData = async () => {
     setLoading(true);
     try {
       const response = await fetch('/fabric/patient/accepted', {
+        method: 'GET',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwt')}`
+          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
         }
       });
-      if (!response.ok) throw new Error('Failed to fetch accepted doctors');
+
+      if (!response.ok) throw new Error("Failed to fetch doctor data.");
       const data = await response.json();
-      setAcceptedDoctors(data);
+      setDoctors(data);
+      setDataFetched({ ...dataFetched, accepted: true });
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  // Fetch Pending Requests
   const fetchPendingRequests = async () => {
     setLoading(true);
     try {
       const response = await fetch('/fabric/patient/request', {
+        method: 'GET',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwt')}`
+          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
         }
       });
-      if (!response.ok) throw new Error('Failed to fetch pending requests');
+
+      if (!response.ok) throw new Error("Failed to fetch pending requests.");
       const data = await response.json();
-      setPendingRequests(data);
+      setPendingDoctors(data);
+      setDataFetched({ ...dataFetched, pending: true });
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  // Handle Doctor Actions
   const handleAction = async (action, doctorId) => {
     try {
       const response = await fetch(`/fabric/patient/request/${doctorId}?status=${action}`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwt')}`
+          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
         }
       });
-      if (!response.ok) throw new Error(`Failed to ${action} doctor`);
-      alert(`Doctor ${action} successfully!`);
-      status === 'Pending' ? fetchPendingRequests() : fetchDoctorData();
+
+      if (!response.ok) throw new Error(`Failed to ${action} doctor.`);
+      alert(`Doctor ${action} successful!`);
+      refreshData();
     } catch (error) {
       console.error(error);
     }
   };
 
-  // View History
   const viewHistory = (doctorId) => {
-    localStorage.setItem('doctorId', doctorId);
-    window.location.href = '/history';
+    navigate(`/DoctorHistory/${doctorId}`);
+  };
+
+  const refreshData = () => {
+    if (status === "Accepted") {
+      setDataFetched({ ...dataFetched, accepted: false });
+      fetchDoctorData();
+    } else {
+      setDataFetched({ ...dataFetched, pending: false });
+      fetchPendingRequests();
+    }
   };
 
   return (
-    <>
-      {/* Include Navbar Component */}
-      <Navbar />
-      <div className="content-wrapper">
-        {/* Status Selector */}
-        <div className="container">
-          <h2>Patient Dashboard</h2>
-          <label>Choose Status:</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option value="Accepted">Accepted</option>
-            <option value="Pending">Pending</option>
-          </select>
-          <button className="refresh-button" onClick={status === 'Accepted' ? fetchDoctorData : fetchPendingRequests}>
-            Refresh
-          </button>
-          {loading && <div className="loading">Loading...</div>}
-        </div>
-
-        {/* Accepted Doctors Section */}
-        {status === 'Accepted' && (
-          <div className="container">
-            <h2>Accepted Doctors</h2>
-            {acceptedDoctors.length > 0 ? (
-              acceptedDoctors.map((doctorId) => (
-                <div className="doctor-actions-row" key={doctorId}>
-                  <span className="doctor-id-display">Doctor ID: {doctorId}</span>
-                  <button className="doctor-button view-button" onClick={() => viewHistory(doctorId)}>View History</button>
-                  <button className="doctor-button revoke-button" onClick={() => handleAction('Revoke', doctorId)}>Revoke</button>
-                </div>
-              ))
-            ) : (
-              <p>No accepted doctors available.</p>
-            )}
-          </div>
-        )}
-
-        {/* Pending Requests Section */}
-        {status === 'Pending' && (
-          <div className="container">
-            <h2>Pending Requests</h2>
-            {pendingRequests.length > 0 ? (
-              pendingRequests.map((doctorId) => (
-                <div className="doctor-actions-row" key={doctorId}>
-                  <span className="doctor-id-display">Doctor ID: {doctorId}</span>
-                  <button className="doctor-button accept-button" onClick={() => handleAction('Accepted', doctorId)}>Accept</button>
-                  <button className="doctor-button revoke-button" onClick={() => handleAction('Rejected', doctorId)}>Reject</button>
-                </div>
-              ))
-            ) : (
-              <p>No pending requests available.</p>
-            )}
-          </div>
-        )}
+    <div className="patient-dashboard">
+      <div className="navbar">
+        Electronic Health Record System
+        <button className="logout-button" onClick={handleLogout}>Logout</button>
       </div>
-    </>
+
+      <div className="container">
+        <h2>Patient Dashboard</h2>
+        <label htmlFor="status">Choose Status: </label>
+        <select
+          id="status"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <option value="Accepted">Accepted</option>
+          <option value="Pending">Pending</option>
+        </select>
+        <button className="refresh-button" onClick={refreshData}>Refresh</button>
+      </div>
+
+      {loading && <div className="loading"></div>}
+
+      {status === "Accepted" && (
+        <div className="container">
+          <h2>Accepted Doctors</h2>
+          {doctors.length > 0 ? doctors.map((doctorId) => (
+            <div key={doctorId} className="doctor-actions-row">
+              <span className="doctor-id-display">Doctor ID: {doctorId}</span>
+              <button className="doctor-button view-button" onClick={() => viewHistory(doctorId)}>View History</button>
+              <button className="doctor-button revoke-button" onClick={() => handleAction('Revoke', doctorId)}>Revoke</button>
+            </div>
+          )) : <p>No accepted doctors available.</p>}
+        </div>
+      )}
+
+      {status === "Pending" && (
+        <div className="container">
+          <h2>Pending Requests</h2>
+          {pendingDoctors.length > 0 ? pendingDoctors.map((doctorId) => (
+            <div key={doctorId} className="doctor-actions-row">
+              <span className="doctor-id-display">Doctor ID: {doctorId}</span>
+              <button className="doctor-button accept-button" onClick={() => handleAction('Accepted', doctorId)}>Accept</button>
+              <button className="doctor-button revoke-button" onClick={() => handleAction('Rejected', doctorId)}>Reject</button>
+            </div>
+          )) : <p>No pending requests available.</p>}
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -1,29 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-
-const Navbar = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('jwt');
-    navigate('/');
-  };
-
-  return (
-    <div className="navbar">
-      Electronic Health Record System
-      <button className="logout-button" onClick={handleLogout}>Logout</button>
-    </div>
-  );
-};
+import React, { useEffect, useState } from 'react';
+import "./../styles/doctor.css";
 
 const DoctorDashboard = () => {
   const [patients, setPatients] = useState([]);
   const [currentPatientId, setCurrentPatientId] = useState(null);
-  const [pdfText, setPdfText] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [pdfText, setPdfText] = useState('');
 
   useEffect(() => {
     fetchPatients();
@@ -36,120 +19,140 @@ const DoctorDashboard = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-        },
+          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+        }
       });
+
+      if (!response.ok) throw new Error('Failed to fetch patients');
       const data = await response.json();
       setPatients(data);
     } catch (error) {
-      console.error('Error fetching patients:', error);
+      console.error(error.message);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('jwt');
+    window.location.href = '/login';
+  };
+
   const viewPDF = (patientId) => {
     localStorage.setItem('patientId', patientId);
-    navigate('/EHRViewer');
+    window.location.href = '/EHRViewer';
+  };
+
+  const showEditModal = (patientId) => {
+    setCurrentPatientId(patientId);
+    setPdfText('');
+  };
+
+  const closeEditModal = () => {
+    setCurrentPatientId(null);
   };
 
   const updatePDF = async () => {
     if (!pdfText.trim()) {
-      alert("Please enter text to update the PDF.");
+      alert('Please enter text to update the PDF.');
       return;
     }
+
     setLoading(true);
     try {
       const response = await fetch(`/fabric/doctor/update-pdf?pid=${currentPatientId}&newText=${encodeURIComponent(pdfText)}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-        },
+          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+        }
       });
-      if (response.ok) {
-        alert("PDF updated successfully!");
-        setPdfText("");
-      } else {
-        alert("Failed to update PDF");
-      }
+
+      if (!response.ok) throw new Error('Failed to update PDF');
+      alert('PDF updated successfully!');
+      viewPDF(currentPatientId);
+      closeEditModal();
     } catch (error) {
-      console.error('Error updating PDF:', error);
+      alert(`Error: ${error.message}`);
     } finally {
       setLoading(false);
-      setCurrentPatientId(null);
     }
   };
 
   const addRequest = async () => {
-    const patientId = document.getElementById('patient-id').value;
-    if (!patientId.trim()) {
-      alert("Please enter a patient ID.");
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    const patientId = document.getElementById('patient-id').value.trim();
+    if (!patientId) {
+      alert('Please enter a patient ID.');
+      setIsSubmitting(false);
       return;
     }
+
     setLoading(true);
     try {
       const response = await fetch(`/fabric/doctor/add-request?pid=${patientId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-        },
+          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+        }
       });
-      if (response.ok) {
-        alert("Request added successfully!");
-        fetchPatients();
-      } else {
-        alert("Failed to add request");
-      }
+
+      if (!response.ok) throw new Error('Failed to add request');
+      alert('Request added successfully!');
+      fetchPatients();
     } catch (error) {
-      console.error('Error adding request:', error);
+      alert(`Error: ${error.message}`);
     } finally {
       setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div>
-      {/* Navbar with Title */}
-      <Navbar title="Doctor Dashboard" />
-
-      {/* Add Request */}
-      <div className="form-container">
-        <input type="text" id="patient-id" placeholder="Enter Patient ID" />
-        <button className="add-button" onClick={addRequest}>Add Request</button>
+    <div className="dashboard-container">
+      {/* Navbar */}
+      <div className="navbar">
+        Electronic Health Record System
+        <button onClick={handleLogout} className="logout-button">Logout</button>
       </div>
 
-      {loading && <div className="loading">Loading...</div>}
+      {/* Form to Add Patient Request */}
+      <div className="add-request-form">
+        <input id="patient-id" placeholder="Enter Patient ID" />
+        <button onClick={addRequest} className="add-request-button">Add Request</button>
+      </div>
+
+      {/* Loading Spinner */}
+      {loading && <div className="loading-spinner"></div>}
 
       {/* Patient List */}
-      <div className="patient-list">
-        {patients.length === 0 ? (
-          <p>No patients found</p>
-        ) : (
-          patients.map((patient) => (
-            <div key={patient.pid} className="patient-item">
-              <h4>Patient ID: {patient.pid}</h4>
-              <div>
-                <button className="view-button" onClick={() => viewPDF(patient.pid)}>View PDF</button>
-                <button className="update-button" onClick={() => setCurrentPatientId(patient.pid)}>Update</button>
-              </div>
+      <div>
+        {patients.map(patient => (
+          <div key={patient.pid} className="patient-card">
+            <h4 className="patient-id">Patient ID: {patient.pid}</h4>
+            <div>
+              <button onClick={() => viewPDF(patient.pid)} className="action-button">View PDF</button>
+              <button onClick={() => showEditModal(patient.pid)} className="action-button">Update</button>
             </div>
-          ))
-        )}
+          </div>
+        ))}
       </div>
 
-      {/* PDF Update Modal */}
+      {/* Edit PDF Modal */}
       {currentPatientId && (
-        <div className="edit-modal">
+        <div className="modal">
           <h3>Edit PDF for Patient {currentPatientId}</h3>
           <textarea
             value={pdfText}
             onChange={(e) => setPdfText(e.target.value)}
             placeholder="Enter text to append to the PDF"
           />
-          <button onClick={updatePDF}>Save Changes</button>
-          <button onClick={() => setCurrentPatientId(null)}>Cancel</button>
+          <br />
+          <button onClick={updatePDF} className="modal-button">Save Changes</button>
+          <button onClick={closeEditModal} className="modal-button cancel">Cancel</button>
         </div>
       )}
     </div>

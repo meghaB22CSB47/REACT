@@ -1,0 +1,171 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #38ef7d, #11998e);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  /* Dashboard Container */
+  .dashboard-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 900px;
+  }
+  
+  /* Navbar Styling */
+  .navbar {
+    background-color: #11998e;
+    color: white;
+    padding: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 8px 8px 0 0;
+    position: relative;
+  }
+  
+  /* Logout Button */
+  .logout-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+  }
+  
+  .logout-button:hover {
+    background-color: #d32f2f;
+  }
+  
+  /* Add Request Section */
+  .add-request-container {
+    display: flex;
+    margin: 20px 0;
+    gap: 10px;
+  }
+  
+  input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+  }
+  
+  button {
+    background-color: #11998e;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0e8c76;
+  }
+  
+  /* Patient List Styling */
+  .patient-card {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.3s;
+  }
+  
+  .patient-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  h4 {
+    margin: 0;
+    color: #11998e;
+  }
+  
+  /* Action Buttons */
+  .action-button {
+    background-color: #11998e;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  
+  .action-button:hover {
+    background-color: #0e8c76;
+  }
+  
+  /* Edit Modal */
+  .edit-modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+  }
+  
+  textarea {
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+  }
+  
+  /* Loader (Spinner) */
+  .loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #11998e;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+  }
+  
+  /* Animation for Loader */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .dashboard-container {
+      padding: 20px;
+    }
+  
+    .add-request-container {
+      flex-direction: column;
+    }
+  
+    input, button {
+      width: 100%;
+    }
+  
+    .logout-button {
+      position: static;
+      margin-top: 10px;
+    }
+  }
+  
