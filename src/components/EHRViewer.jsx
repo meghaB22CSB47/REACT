@@ -14,7 +14,7 @@ const EHRViewer = () => {
   useEffect(() => {
     const fetchEHR = async () => {
       try {
-        const data = await fetchWithAuth(`/api/ehr/${patientId}`);
+        const data = await fetchWithAuth(`http://localhost:8080/fabric/doctor/view-ehr?patientId=${patientId}`);
         setEhrData(data);
       } catch (error) {
         console.error(error);
