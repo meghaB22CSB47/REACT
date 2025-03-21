@@ -1,174 +1,145 @@
-/* General Styling */
-body, html {
-    font-family: Arial, sans-serif;
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #b2dfdb);
     margin: 0;
     padding: 0;
-    background: linear-gradient(to right, #38ef7d, #11998e);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
   
-  /* Dashboard Container */
+  /* Patient Dashboard Container */
   .patient-dashboard {
-    width: 100%;
-    max-width: 900px;
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
   }
   
-  /* Navbar Styling */
+  /* Navbar */
   .navbar {
-    background-color: #11998e;
+    background-color: #004d40;
     color: white;
-    padding: 20px;
+    width: 100%;
+    padding: 15px 30px;
     font-size: 24px;
     font-weight: bold;
-    text-align: center;
+    display: flex;
+    justify-content: center; /* Center the text */
+    align-items: center;
     position: relative;
   }
   
   /* Logout Button */
   .logout-button {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    background-color: #f44336;
+    background-color: #00796b;
     color: white;
     border: none;
-    padding: 10px 15px;
+    padding: 12px 24px;
+    font-size: 16px;
     border-radius: 8px;
     cursor: pointer;
+    position: absolute;
+    right: 30px;
   }
   
   .logout-button:hover {
-    background-color: #d32f2f;
+    background-color: #005f56;
   }
   
-  /* Container Styling */
+  /* Dashboard Container with Larger Width */
   .container {
+    background-color: white;
     padding: 30px;
+    width: 90%;
+    max-width: 1200px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    margin-top: 20px;
+    text-align: center;
   }
   
-  /* Heading and Labels */
-  h2 {
-    color: #11998e;
-    margin-bottom: 20px;
+  .container h2 {
+    font-size: 28px;
+    color: #00796b;
   }
   
-  label {
-    font-size: 16px;
-  }
-  
-  /* Select Dropdown and Buttons */
-  select, button {
-    margin: 10px 0;
+  /* Select Dropdown */
+  select {
     padding: 12px;
     font-size: 16px;
+    margin: 20px 0;
     border-radius: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid #00796b;
+    background-color: #e0f7fa;
+    color: #004d40;
   }
   
-  /* Dropdown */
-  select {
-    width: 200px;
-    background-color: #f1f1f1;
-  }
-  
-  /* Refresh Button */
-  .refresh-button {
-    background-color: #11998e;
-    color: white;
-    border: none;
-    cursor: pointer;
-    margin-left: 10px;
-  }
-  
-  .refresh-button:hover {
-    background-color: #0e8c76;
-  }
-  
-  /* Doctor Action Row */
+  /* Doctor Actions Row */
   .doctor-actions-row {
     display: flex;
     justify-content: space-between;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    background-color: #f9f9f9;
-  }
-  
-  .doctor-actions-row:hover {
-    background-color: #eef9f5;
+    align-items: center;
+    background-color: #f0fdfa;
+    margin: 10px 0;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
   }
   
   .doctor-id-display {
-    color: #11998e;
-    font-weight: bold;
+    font-size: 18px;
+    color: #004d40;
+    font-weight: 600;
   }
   
-  /* Buttons for Doctor Actions */
+  /* Buttons */
   .doctor-button {
-    background-color: #11998e;
+    padding: 12px 24px;
+    font-size: 14px;
     color: white;
     border: none;
-    padding: 10px 15px;
     border-radius: 8px;
     cursor: pointer;
-    margin-left: 10px;
+    transition: background-color 0.3s;
   }
   
-  .doctor-button.view-button {
-    background-color: #4caf50;
+  .view-button {
+    background-color: #00796b;
   }
   
-  .doctor-button.revoke-button {
-    background-color: #f44336;
+  .accept-button {
+    background-color: #2e7d32;
   }
   
-  .doctor-button.accept-button {
-    background-color: #2196f3;
+  .revoke-button {
+    background-color: #d32f2f;
   }
   
   .doctor-button:hover {
-    opacity: 0.9;
-  }
-  
-  /* Loading Spinner */
-  .loading {
-    border: 6px solid #f3f3f3;
-    border-top: 6px solid #11998e;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 20px auto;
-  }
-  
-  /* Spinner Animation */
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    filter: brightness(0.9);
   }
   
   /* Responsive Design */
-  @media (max-width: 600px) {
+  @media (max-width: 900px) {
+    .container {
+      width: 95%;
+    }
+  
     .doctor-actions-row {
       flex-direction: column;
       gap: 10px;
     }
   
-    select {
+    .doctor-button {
       width: 100%;
     }
   
     .logout-button {
       position: static;
       margin-top: 10px;
+    }
+  
+    .navbar {
+      flex-direction: column;
     }
   }
   

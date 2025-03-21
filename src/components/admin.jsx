@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import "./../styles/admin.css";
 
 const Admin = () => {
@@ -13,10 +13,12 @@ const Admin = () => {
     const jwt = localStorage.getItem("jwt");
     if (jwt) {
       try {
-        const decodedToken = jwt_decode(jwt);
-        if (decodedToken.mspId === "Org2MSP") {
-          setShowUpload(true);
-        }
+        // const decodedToken = jwtDecode(jwt);
+        // if (decodedToken.mspId === "Org2MSP") {
+        //   setShowUpload(true);
+        // }
+        
+        setShowUpload(true);
       } catch (error) {
         console.error("Error decoding token:", error);
       }

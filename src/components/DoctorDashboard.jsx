@@ -129,7 +129,8 @@ const DoctorDashboard = () => {
       {loading && <div className="loading-spinner"></div>}
 
       {/* Patient List */}
-      <div>
+      <div className="patient-list">
+        <h2>Patients</h2>
         {patients.map(patient => (
           <div key={patient.pid} className="patient-card">
             <h4 className="patient-id">Patient ID: {patient.pid}</h4>

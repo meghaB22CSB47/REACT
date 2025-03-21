@@ -1,62 +1,121 @@
-body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #38ef7d, #11998e);
+/* Reset Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(to right, #b2dfdb, #e0f7fa); /* Light Green Gradient */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
   }
   
-  .admin-container, .form-container {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 350px;
-  }
-  
-  h1 {
-    color: #11998e;
-  }
-  
-  .input-group {
-    display: flex;
-    margin-bottom: 15px;
-    background: #f1f1f1;
-    padding: 10px;
-    border-radius: 5px;
-  }
-  
-  input {
-    border: none;
-    background: transparent;
-    flex: 1;
-    font-size: 16px;
-  }
-  
-  button {
-    background: #11998e;
-    color: white;
-    border: none;
-    padding: 12px 15px;
+  /* Admin Container - Bigger Box */
+  .admin-container {
     width: 100%;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+    max-width: 700px; /* Increased Width */
+    background: rgba(255, 255, 255, 0.4); /* Light Transparent White */
+    backdrop-filter: blur(15px); /* Blur for Glass Effect */
+    border-radius: 20px;
+    padding: 60px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
   }
   
-  button:hover {
-    background: #0e8c76;
+  /* Title */
+  .admin-title {
+    font-size: 32px;
+    color: #00796b;
+    margin-bottom: 40px; /* Space below Add User */
   }
   
+  /* Add Extra Space Below "Add User" */
+  .form-title {
+    font-size: 28px;
+    color: #00796b;
+    margin-bottom: 60px; /* Increased space from Add User to Username */
+  }
+  
+  /* Logout Button */
   .logout-button {
-    background: #ff4b5c;
-    margin-bottom: 10px;
+    background-color: #00796b;
+    color: white;
+    font-size: 18px;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-bottom: 30px;
   }
   
   .logout-button:hover {
-    background: #e03e50;
+    background-color: #005f56;
+  }
+  
+  /* Form Section */
+  .input-group {
+    margin-bottom: 25px;
+    text-align: left;
+  }
+  
+  /* Input Fields */
+  input {
+    width: 100%;
+    padding: 18px;
+    border-radius: 30px;
+    border: none;
+    background-color: #ffffff;
+    font-size: 18px;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  input::placeholder {
+    color: #999;
+  }
+  
+  input:focus {
+    outline: none;
+    border: 2px solid #00796b;
+  }
+  
+  /* Upload File Input */
+  input[type="file"] {
+    background-color: #e0f7fa;
+    padding: 14px;
+    border-radius: 30px;
+  }
+  
+  /* Submit Button */
+  .submit-button {
+    background-color: #00796b;
+    color: white;
+    font-size: 18px;
+    padding: 18px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    width: 100%;
+  }
+  
+  .submit-button:hover {
+    background-color: #005f56;
+  }
+  
+  .submit-button:disabled {
+    background-color: #b0bec5;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 480px) {
+    .admin-container {
+      padding: 40px;
+      max-width: 90%;
+    }
   }
   

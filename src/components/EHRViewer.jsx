@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { fetchWithAuth } from '../api/api';
 import Navbar from './Navbar';
-import Loader from './Loader';
 import { useSearchParams } from 'react-router-dom';
-import "./../styles/ehr.css";
+//import "./../styles/ehr.css";
 
 const EHRViewer = () => {
   const [ehrData, setEhrData] = useState(null);

@@ -23,9 +23,9 @@ const DoctorHistory = () => {
   };
 
   return (
-    <div>
+    <div  className="history-container">
       <div className="navbar">
-        Doctor History
+        <h1> HISTORY </h1>
         <div className="button-container">
           <button className="button logout-button" onClick={handleLogout}>Logout</button>
           <button className="button back-button" onClick={handleGoBack}>Go Back</button>

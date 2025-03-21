@@ -1,0 +1,167 @@
+/* Reset and General Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #e0f7fa, #b2dfdb);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Container */
+.home-page-container {
+  width: 100%;
+  max-width: 1600px;
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  min-height: 100vh;
+}
+
+/* Header Section */
+.home-header {
+  background-color: #004d40;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.home-logo {
+  font-size: 32px;
+  font-weight: bold;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.home-login-btn {
+  background-color: #00796b;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  position: absolute;
+  right: 20px;
+}
+
+.home-login-btn:hover {
+  background-color: #005f56;
+}
+
+/* Hero Section */
+.home-hero {
+  padding: 60px 30px;
+  text-align: center;
+  min-height: 150px;
+  background: linear-gradient(120deg, #b2dfdb, #e0f7fa);
+  align-items: center;
+}
+
+.home-hero h1 {
+  font-size: 50px;
+  color: #004d40;
+  margin-bottom: 10px;
+}
+
+.home-highlight {
+  color: #00796b;
+}
+
+.home-hero p {
+  font-size: 22px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* Features Section */
+.home-features {
+  display: flex;
+  justify-content: space-around;
+  padding: 40px 20px;
+  min-height: 200px;
+  background-color: #f0fdfa;
+  align-items: center;
+}
+
+.feature-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  width: 30%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card h3 {
+  font-size: 22px;
+  color: #00796b;
+  margin-bottom: 10px;
+}
+
+.feature-card p {
+  font-size: 16px;
+  color: #666;
+}
+
+/* Footer */
+.home-footer {
+  background-color: #004d40;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .home-features {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .feature-card {
+    width: 80%;
+    margin-bottom: 15px;
+  }
+
+  .home-hero h1 {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 600px) {
+  .home-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .home-login-btn {
+    margin-top: 10px;
+  }
+
+  .home-hero h1 {
+    font-size: 30px;
+  }
+
+  .feature-card {
+    width: 90%;
+  }
+}

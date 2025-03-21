@@ -1,171 +1,195 @@
-/* General Styling */
+/* General Styles */
 body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #38ef7d, #11998e);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #b2dfdb);
     margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    padding: 0;
   }
   
-  /* Dashboard Container */
   .dashboard-container {
-    background-color: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
   }
   
-  /* Navbar Styling */
+  /* Navbar */
   .navbar {
-    background-color: #11998e;
+    background-color: #004d40;
     color: white;
-    padding: 15px;
-    font-size: 24px;
+    width: 100%;
+    padding: 20px 0;
+    font-size: 28px;
     font-weight: bold;
     text-align: center;
-    border-radius: 8px 8px 0 0;
     position: relative;
   }
   
-  /* Logout Button */
   .logout-button {
-    background-color: #f44336;
+    background-color: #00796b;
     color: white;
     border: none;
-    padding: 10px 20px;
-    font-size: 14px;
-    border-radius: 5px;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 8px;
     cursor: pointer;
     position: absolute;
-    right: 20px;
+    right: 30px;
   }
   
   .logout-button:hover {
-    background-color: #d32f2f;
+    background-color: #005f56;
   }
   
-  /* Add Request Section */
-  .add-request-container {
-    display: flex;
-    margin: 20px 0;
-    gap: 10px;
+  /* Add Request Form */
+  .add-request-form {
+    background-color: white;
+    padding: 30px;
+    width: 200%; /* Similar to patient.css */
+    max-width: 1000px;
+    border-radius: 16px;
+    margin-top: 20px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
   }
   
-  input {
-    flex: 1;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
+  .add-request-form input {
+    padding: 14px;
+    margin-right: 12px;
+    width: 60%;
     font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #00796b;
   }
   
-  button {
-    background-color: #11998e;
+  .add-request-button {
+    padding: 14px 24px;
+    background-color: #2e7d32;
     color: white;
     border: none;
-    padding: 12px 20px;
-    font-size: 16px;
     border-radius: 8px;
     cursor: pointer;
+    font-size: 16px;
   }
   
-  button:hover {
-    background-color: #0e8c76;
+  .add-request-button:hover {
+    background-color: #1b5e20;
   }
   
-  /* Patient List Styling */
+  /* Patient List */
+  .patient-list {
+    width: 200%;
+    max-width: 1090px;
+    margin-top: 20px;
+  }
+  
   .patient-card {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 15px;
+    background-color: #ffffff;
+    margin-bottom: 20px;
+    padding: 30px;
+    border-radius: 16px;
     display: flex;
     justify-content: space-between;
-    border: 1px solid #ddd;
-    transition: box-shadow 0.3s;
+    align-items: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
   }
   
-  .patient-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  .patient-info {
+    flex-grow: 1;
   }
   
-  h4 {
-    margin: 0;
-    color: #11998e;
+  .patient-id {
+    font-size: 18px;
+    color: #004d40;
+    margin-bottom: 10px;
   }
   
   /* Action Buttons */
   .action-button {
-    background-color: #11998e;
+    padding: 12px 20px;
+    background-color: #00796b;
     color: white;
     border: none;
-    padding: 10px;
     border-radius: 8px;
-    margin-left: 10px;
     cursor: pointer;
+    margin-left: 10px;
+    font-size: 14px;
   }
   
   .action-button:hover {
-    background-color: #0e8c76;
+    background-color: #005f56;
   }
   
-  /* Edit Modal */
-  .edit-modal {
+  /* Align Buttons Closer */
+  .patient-card div {
+    display: flex;
+    gap: 12px;
+  }
+  
+  /* Modal */
+  .modal {
+    background-color: rgba(0, 0, 0, 0.6);
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
     background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    margin-top: 20px;
-    border: 1px solid #ddd;
+    padding: 30px;
+    border-radius: 16px;
+    width: 80%;
+    max-width: 600px;
   }
   
-  textarea {
+  .modal textarea {
     width: 100%;
     height: 150px;
-    padding: 10px;
+    padding: 12px;
+    font-size: 14px;
     border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 16px;
+    border: 1px solid #00796b;
   }
   
-  /* Loader (Spinner) */
-  .loader {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #11998e;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 20px auto;
+  .modal-button {
+    margin-top: 10px;
+    padding: 12px 20px;
+    font-size: 14px;
+    background-color: #00796b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
   }
   
-  /* Animation for Loader */
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  .modal-button.cancel {
+    background-color: #d32f2f;
+  }
+  
+  .modal-button:hover {
+    filter: brightness(0.9);
   }
   
   /* Responsive Design */
   @media (max-width: 600px) {
-    .dashboard-container {
-      padding: 20px;
+    .add-request-form input {
+      width: 100%;
+      margin-bottom: 10px;
     }
   
-    .add-request-container {
-      flex-direction: column;
-    }
-  
-    input, button {
+    .add-request-button {
       width: 100%;
     }
   
-    .logout-button {
-      position: static;
-      margin-top: 10px;
+    .patient-card {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .action-button {
+      width: 100%;
     }
   }
   
