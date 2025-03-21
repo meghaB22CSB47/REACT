@@ -19,7 +19,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={token ? <Admin /> : <Navigate to="/admin" />}/>
         <Route path="/DoctorDashboard" element={token ? <DoctorDashboard /> : <Navigate to="/login" />} />
-        <Route path="/PatientDashboard" element={token ? <PatientDashboard /> : <Navigate to="/PatientDashboard" />} />
+        <Route path="/PatientDashboard" element={token ? <PatientDashboard /> : <Navigate to="/login" />} />
         <Route path="/EHRViewer" element={token ? <EHRViewer /> : <Navigate to="/login" />} />
         <Route path="/history/:doctorId" element={token ? <DoctorHistory /> : <Navigate to="/login" />} />
         <Route path="*" element={<h1>404 Not Found</h1>} />

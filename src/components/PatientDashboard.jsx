@@ -30,7 +30,7 @@ const PatientDashboard = () => {
   const fetchDoctorData = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/fabric/patient/accepted', {
+      const response = await fetch('http://localhost:8080/fabric/patient/accepted', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('jwt')}`
@@ -51,7 +51,7 @@ const PatientDashboard = () => {
   const fetchPendingRequests = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/fabric/patient/request', {
+      const response = await fetch('http://localhost:8080/fabric/patient/request', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('jwt')}`
@@ -71,7 +71,7 @@ const PatientDashboard = () => {
 
   const handleAction = async (action, doctorId) => {
     try {
-      const response = await fetch(`/fabric/patient/request/${doctorId}?status=${action}`, {
+      const response = await fetch(`http://localhost:8080/fabric/patient/request/${doctorId}?status=${action}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('jwt')}`

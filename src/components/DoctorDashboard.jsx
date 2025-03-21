@@ -15,7 +15,7 @@ const DoctorDashboard = () => {
   const fetchPatients = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/fabric/doctor/patients', {
+      const response = await fetch('http://localhost:8080/fabric/doctor/patients', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ const DoctorDashboard = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`/fabric/doctor/update-pdf?pid=${currentPatientId}&newText=${encodeURIComponent(pdfText)}`, {
+      const response = await fetch(`http://localhost:8080/fabric/doctor/update-pdf?pid=${currentPatientId}&newText=${encodeURIComponent(pdfText)}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ const DoctorDashboard = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`/fabric/doctor/add-request?pid=${patientId}`, {
+      const response = await fetch(`http://localhost:8080/fabric/doctor/add-request?pid=${patientId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

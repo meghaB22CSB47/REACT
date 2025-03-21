@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import "./../styles/admin.css";
 
 const Admin = () => {
@@ -13,12 +13,10 @@ const Admin = () => {
     const jwt = localStorage.getItem("jwt");
     if (jwt) {
       try {
-        // const decodedToken = jwtDecode(jwt);
-        // if (decodedToken.mspId === "Org2MSP") {
-        //   setShowUpload(true);
-        // }
-        
-        setShowUpload(true);
+        const decodedToken = jwtDecode(jwt);
+        if (decodedToken.mspId === "Org2MSP") {
+          setShowUpload(true);
+        }
       } catch (error) {
         console.error("Error decoding token:", error);
       }
@@ -45,7 +43,7 @@ const Admin = () => {
 
     const jwt = localStorage.getItem("jwt");
     try {
-      const response = await fetch("/fabric/register", {
+      const response = await fetch("http://localhost:8080/fabric/register", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${jwt}`,

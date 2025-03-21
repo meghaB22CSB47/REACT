@@ -10,20 +10,20 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const loginData = new URLSearchParams({ username, password, mspId });
+    const loginData = {username,password,mspId}
 
     try {
-      const response = await fetch('/fabric/login', {
+      const response = await fetch('http://localhost:8080/fabric/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: loginData.toString()
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginData)
       });
 
       if (!response.ok) throw new Error('Login failed');
 
       const token = await response.text();
       localStorage.setItem('jwt', token);
-
+      
       if (username === 'admin') {
         navigate('/admin');
       } else if (mspId === 'Org1MSP') {
