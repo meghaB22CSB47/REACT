@@ -126,18 +126,18 @@ const DoctorDashboard = () => {
       </div>
 
       {/* Loading Spinner */}
-      {loading && <div className="loading-spinner"></div>}
+      {/* {loading && <div className="loading-spinner"></div>} */}
 
       {/* Patient List */}
       <div className="patient-list">
         <h2>Patients</h2>
         {patients.map(patient => (
           <div key={patient.pid} className="patient-card">
-            <h4 className="patient-id">Patient ID: {patient.pid}</h4>
-            <div>
+            {/* <h4 className="patient-id">Patient ID: {patient.pid}</h4> */}
+              <span>Patient ID: {patient.pid}</span>
               <button onClick={() => viewPDF(patient.pid)} className="action-button">View PDF</button>
               <button onClick={() => showEditModal(patient.pid)} className="action-button">Update</button>
-            </div>
+           
           </div>
         ))}
       </div>
@@ -151,7 +151,7 @@ const DoctorDashboard = () => {
             onChange={(e) => setPdfText(e.target.value)}
             placeholder="Enter text to append to the PDF"
           />
-          <br />
+          {/* <br /> */}
           <button onClick={updatePDF} className="modal-button">Save Changes</button>
           <button onClick={closeEditModal} className="modal-button cancel">Cancel</button>
         </div>

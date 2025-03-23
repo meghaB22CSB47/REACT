@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-//import "./../styles/patient.css";
+import "./../styles/patient.css";
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
@@ -110,18 +110,14 @@ const PatientDashboard = () => {
       <div className="container">
         <h2>Patient Dashboard</h2>
         <label htmlFor="status">Choose Status: </label>
-        <select
-          id="status"
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-        >
+        <select id="status" value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="Accepted">Accepted</option>
           <option value="Pending">Pending</option>
         </select>
-        <button className="refresh-button" onClick={refreshData}>Refresh</button>
+        {/* <button className="refresh-button" onClick={refreshData}>Refresh</button> */}
       </div>
 
-      {loading && <div className="loading"></div>}
+      {/* {loading && <div className="loading"></div>} */}
 
       {status === "Accepted" && (
         <div className="container">
