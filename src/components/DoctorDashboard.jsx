@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
+=======
+import React, { useEffect, useState, useRef } from 'react';
+>>>>>>> acf62be4877130ff5f637f646e39972771c1375a
 import "./../styles/doctor.css";
 
 const DoctorDashboard = () => {
@@ -7,6 +11,7 @@ const DoctorDashboard = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [pdfText, setPdfText] = useState('');
+  const patientIdRef = useRef(null); // Use ref for the input field
 
   useEffect(() => {
     fetchPatients();
@@ -83,7 +88,7 @@ const DoctorDashboard = () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    const patientId = document.getElementById('doctor-patient-id').value.trim();
+    const patientId = patientIdRef.current.value.trim(); // Access the input value using ref
     if (!patientId) {
       alert('Please enter a patient ID.');
       setIsSubmitting(false);
@@ -121,24 +126,21 @@ const DoctorDashboard = () => {
 
       {/* Form to Add Patient Request */}
       <div className="doctor-add-request-form">
-        <input id="doctor-patient-id" placeholder="Enter Patient ID" />
+        <input ref={patientIdRef} placeholder="Enter Patient ID" />
         <button onClick={addRequest} className="doctor-add-request-button">Add Request</button>
       </div>
 
       {/* Patient List */}
+      {/* Patient List */}
       <div className="doctor-patient-list">
-        <h2>Patients</h2>
-        {patients.length > 0 ? (
-          patients.map(patient => (
-            <div key={patient.patientId} className="doctor-patient-card">
-              <span>Patient ID: {patient.patientId}</span>
-              <button onClick={() => viewPDF(patient.patientId)} className="doctor-action-button">View PDF</button>
-              <button onClick={() => showEditModal(patient.patientId)} className="doctor-action-button">Update</button>
-            </div>
-          ))
-        ) : (
-          <p>No patients available</p>
-        )}
+      <h2>Patients</h2>
+      {patients.map(patient => (
+        <div key={patient.pid} className="doctor-patient-card">
+          <span>Patient ID: {patient.pid}</span>
+          <button onClick={() => viewPDF(patient.pid)} className="doctor-action-button">View PDF</button>
+          <button onClick={() => showEditModal(patient.pid)} className="doctor-action-button">Update</button>
+        </div>
+      ))}
       </div>
 
       {/* Edit PDF Modal */}
