@@ -16,75 +16,75 @@ const PatientDashboard = () => {
   };
 
   useEffect(() => {
-    toggleDoctorActions();
+    //toggleDoctorActions();
   }, [status]);
 
   const toggleDoctorActions = () => {
     if (status === "Accepted" && !dataFetched.accepted) {
-      fetchDoctorData();
+      //fetchDoctorData();
     } else if (status === "Pending" && !dataFetched.pending) {
-      fetchPendingRequests();
+      //fetchPendingRequests();
     }
   };
 
-  const fetchDoctorData = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('http://localhost:8080/fabric/patient/accepted', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-        }
-      });
+  // const fetchDoctorData = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await fetch('http://localhost:8080/fabric/patient/accepted', {
+  //       method: 'GET',
+  //       headers: {
+  //         'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+  //       }
+  //     });
 
-      if (!response.ok) throw new Error("Failed to fetch doctor data.");
-      const data = await response.json();
-      setDoctors(data);
-      setDataFetched({ ...dataFetched, accepted: true });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     if (!response.ok) throw new Error("Failed to fetch doctor data.");
+  //     const data = await response.json();
+  //     setDoctors(data);
+  //     setDataFetched({ ...dataFetched, accepted: true });
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const fetchPendingRequests = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('http://localhost:8080/fabric/patient/request', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-        }
-      });
+  // const fetchPendingRequests = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await fetch('http://localhost:8080/fabric/patient/request', {
+  //       method: 'GET',
+  //       headers: {
+  //         'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+  //       }
+  //     });
 
-      if (!response.ok) throw new Error("Failed to fetch pending requests.");
-      const data = await response.json();
-      setPendingDoctors(data);
-      setDataFetched({ ...dataFetched, pending: true });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     if (!response.ok) throw new Error("Failed to fetch pending requests.");
+  //     const data = await response.json();
+  //     setPendingDoctors(data);
+  //     setDataFetched({ ...dataFetched, pending: true });
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const handleAction = async (action, doctorId) => {
-    try {
-      const response = await fetch(`http://localhost:8080/fabric/patient/request/${doctorId}?status=${action}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-        }
-      });
+  // const handleAction = async (action, doctorId) => {
+  //   try {
+  //     const response = await fetch(`http://localhost:8080/fabric/patient/request/${doctorId}?status=${action}`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+  //       }
+  //     });
 
-      if (!response.ok) throw new Error(`Failed to ${action} doctor.`);
-      alert(`Doctor ${action} successful!`);
-      refreshData();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  //     if (!response.ok) throw new Error(`Failed to ${action} doctor.`);
+  //     alert(`Doctor ${action} successful!`);
+  //     refreshData();
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const viewHistory = (doctorId) => {
     navigate(`/DoctorHistory/${doctorId}`);
@@ -93,10 +93,10 @@ const PatientDashboard = () => {
   const refreshData = () => {
     if (status === "Accepted") {
       setDataFetched({ ...dataFetched, accepted: false });
-      fetchDoctorData();
+      //fetchDoctorData();
     } else {
       setDataFetched({ ...dataFetched, pending: false });
-      fetchPendingRequests();
+      //fetchPendingRequests();
     }
   };
 
