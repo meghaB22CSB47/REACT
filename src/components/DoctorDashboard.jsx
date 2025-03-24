@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import "./../styles/doctor.css";
-
+import "./doctor.css";
 
 const DoctorDashboard = () => {
   const [patients, setPatients] = useState([]);
@@ -84,7 +83,7 @@ const DoctorDashboard = () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    const patientId = document.getElementById('patient-id').value.trim();
+    const patientId = document.getElementById('doctor-patient-id').value.trim();
     if (!patientId) {
       alert('Please enter a patient ID.');
       setIsSubmitting(false);
@@ -126,16 +125,20 @@ const DoctorDashboard = () => {
         <button onClick={addRequest} className="doctor-add-request-button">Add Request</button>
       </div>
 
-      {/* Patient List (Static Data) */}
+      {/* Patient List */}
       <div className="doctor-patient-list">
         <h2>Patients</h2>
-        {[1, 2, 3].map(patientId => (
-          <div key={patientId} className="doctor-patient-card">
-            <span>Patient ID: {patientId}</span>
-            <button onClick={() => viewPDF(patientId)} className="doctor-action-button">View PDF</button>
-            <button onClick={() => showEditModal(patientId)} className="doctor-action-button">Update</button>
-          </div>
-        ))}
+        {patients.length > 0 ? (
+          patients.map(patient => (
+            <div key={patient.patientId} className="doctor-patient-card">
+              <span>Patient ID: {patient.patientId}</span>
+              <button onClick={() => viewPDF(patient.patientId)} className="doctor-action-button">View PDF</button>
+              <button onClick={() => showEditModal(patient.patientId)} className="doctor-action-button">Update</button>
+            </div>
+          ))
+        ) : (
+          <p>No patients available</p>
+        )}
       </div>
 
       {/* Edit PDF Modal */}
