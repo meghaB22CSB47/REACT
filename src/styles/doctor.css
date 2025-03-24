@@ -17,18 +17,23 @@ body {
 .doctor-navbar {
   background-color: #004d40;
   color: white;
-  width: 200%;
+  width: 100%;
   padding: 20px 0;
   font-size: 24px;
   display: flex;
   justify-content: center; /* Center the heading */
   align-items: center;
   font-weight: bold;
-  position: relative;
+  position: fixed; /* Fixed at the top */
+  top: 0;
+  left: 0;
+  right: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Ensures it stays above other elements */
 }
 
 .doctor-logout-button {
-  background-color: #00796b;
+  background-color:#dc3545;
 color: white;
 border: none;
 padding: 12px 24px;
@@ -40,7 +45,7 @@ right: 10%;
 }
 
 .doctor-logout-button:hover {
-  background-color: #005f56;
+  background-color:#dc3545;
 }
 
 /* Add Request Form */
