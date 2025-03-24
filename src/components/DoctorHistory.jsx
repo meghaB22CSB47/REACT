@@ -23,22 +23,22 @@ const DoctorHistory = () => {
   };
 
   return (
-    <div  className="history-container">
-      <div className="navbar">
+    <div className="doctor-history-container">
+      <div className="doctor-history-navbar">
         <h1> HISTORY </h1>
-        <div className="button-container">
-          <button className="button logout-button" onClick={handleLogout}>Logout</button>
-          <button className="button back-button" onClick={handleGoBack}>Go Back</button>
+        <div className="doctor-history-button-container">
+          <button className="doctor-history-button doctor-history-logout-button" onClick={handleLogout}>Logout</button>
+          <button className="doctor-history-button doctor-history-back-button" onClick={handleGoBack}>Go Back</button>
         </div>
       </div>
 
-      <div className="content-wrapper">
-        <div className="container">
+      <div className="doctor-history-content-wrapper">
+        <div className="doctor-history-box">
           <h2>{`History for Doctor ID: ${doctorId}`}</h2>
           {historyData.length === 0 ? (
             <p>No history available.</p>
           ) : (
-            <table>
+            <table className="doctor-history-table">
               <thead>
                 <tr>
                   <th>Type</th>

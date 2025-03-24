@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import "./../styles/doctor.css";
 
+
 const DoctorDashboard = () => {
   const [patients, setPatients] = useState([]);
   const [currentPatientId, setCurrentPatientId] = useState(null);
@@ -112,48 +113,42 @@ const DoctorDashboard = () => {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="doctor-dashboard-container">
       {/* Navbar */}
-      <div className="navbar">
+      <div className="doctor-navbar">
         Electronic Health Record System
-        <button onClick={handleLogout} className="logout-button">Logout</button>
+        <button onClick={handleLogout} className="doctor-logout-button">Logout</button>
       </div>
 
       {/* Form to Add Patient Request */}
-      <div className="add-request-form">
-        <input id="patient-id" placeholder="Enter Patient ID" />
-        <button onClick={addRequest} className="add-request-button">Add Request</button>
+      <div className="doctor-add-request-form">
+        <input id="doctor-patient-id" placeholder="Enter Patient ID" />
+        <button onClick={addRequest} className="doctor-add-request-button">Add Request</button>
       </div>
 
-      {/* Loading Spinner */}
-      {/* {loading && <div className="loading-spinner"></div>} */}
-
-      {/* Patient List */}
-      <div className="patient-list">
+      {/* Patient List (Static Data) */}
+      <div className="doctor-patient-list">
         <h2>Patients</h2>
-        {patients.map(patient => (
-          <div key={patient.pid} className="patient-card">
-            {/* <h4 className="patient-id">Patient ID: {patient.pid}</h4> */}
-              <span>Patient ID: {patient.pid}</span>
-              <button onClick={() => viewPDF(patient.pid)} className="action-button">View PDF</button>
-              <button onClick={() => showEditModal(patient.pid)} className="action-button">Update</button>
-           
+        {[1, 2, 3].map(patientId => (
+          <div key={patientId} className="doctor-patient-card">
+            <span>Patient ID: {patientId}</span>
+            <button onClick={() => viewPDF(patientId)} className="doctor-action-button">View PDF</button>
+            <button onClick={() => showEditModal(patientId)} className="doctor-action-button">Update</button>
           </div>
         ))}
       </div>
 
       {/* Edit PDF Modal */}
       {currentPatientId && (
-        <div className="modal">
+        <div className="doctor-modal">
           <h3>Edit PDF for Patient {currentPatientId}</h3>
           <textarea
             value={pdfText}
             onChange={(e) => setPdfText(e.target.value)}
             placeholder="Enter text to append to the PDF"
           />
-          {/* <br /> */}
-          <button onClick={updatePDF} className="modal-button">Save Changes</button>
-          <button onClick={closeEditModal} className="modal-button cancel">Cancel</button>
+          <button onClick={updatePDF} className="doctor-modal-button">Save Changes</button>
+          <button onClick={closeEditModal} className="doctor-modal-button doctor-cancel">Cancel</button>
         </div>
       )}
     </div>

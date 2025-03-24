@@ -67,11 +67,11 @@ const Admin = () => {
 
   return (
     <div className="admin-container">
-      <div className="logout-container">
+      {/* <div className="logout-container">
         <button className="logout-button" onClick={handleLogout}>
           Logout
         </button>
-      </div>
+      </div> */}
 
       <div className="form-container">
         <h1 className="form-title">Add User</h1>
@@ -94,9 +94,14 @@ const Admin = () => {
             </div>
           )}
 
-          <button type="submit" className="btn" disabled={loading}>
-            {loading ? "Loading..." : "Add User"}
-          </button>
+          <div className="button-container">
+            <button type="submit" className="btn" disabled={loading}>
+              {loading ? "Loading..." : "Add User"}
+            </button>
+            <button className="logout-button" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
         </form>
       </div>
     </div>

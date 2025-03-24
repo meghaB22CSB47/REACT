@@ -29,7 +29,7 @@ const Login = () => {
       } else if (mspId === 'Org1MSP') {
         navigate('/DoctorDashboard');
       } else if (mspId === 'Org2MSP') {
-        navigate('/PatientDashboard');
+        navigate('/PatientDashboard');z
       } else {
         alert('Unknown MSP ID');
       }

@@ -1,145 +1,152 @@
 /* General Styles */
 body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(135deg, #e0f7fa, #b2dfdb);
-    margin: 0;
-    padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #e0f7fa, #b2dfdb);
+  margin: 0;
+  padding: 0;
+}
+
+/* Patient Dashboard Container */
+.patient-dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Navbar */
+.patient-navbar {
+  background-color: #004d40;
+  color: white;
+  width:250%;
+  padding: 15px 30px;
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Logout Button - Moved 5cm to Right */
+.patient-logout-button {
+  background-color: #00796b;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  position: absolute;
+  right: 10%; 
+}
+
+.patient-logout-button:hover {
+  background-color: #005f56;
+}
+
+/* Dashboard Container with Larger Width */
+.patient-container {
+  background-color: white;
+  padding: 35px;
+  width: 250%;
+  max-width: 1600px; /* Increased width */
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+  text-align: center;
+}
+
+.patient-container h2 {
+  font-size: 32px;
+  color: #00796b;
+}
+
+/* Select Dropdown */
+.patient-select {
+  padding: 12px;
+  font-size: 16px;
+  margin: 20px 0;
+  border-radius: 8px;
+  border: 1px solid #00796b;
+  background-color: #e0f7fa;
+  color: #004d40;
+}
+
+/* Doctor Actions Row */
+.patient-doctor-actions-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f0fdfa;
+  margin: 10px 0;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.patient-doctor-id-display {
+  font-size: 18px;
+  color: #004d40;
+  font-weight: 600;
+}
+
+/* Buttons */
+.patient-doctor-button {
+  padding: 12px 24px;
+  font-size: 14px;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.patient-view-button {
+  background-color: #00796b;
+}
+
+.patient-accept-button {
+  background-color: #2e7d32;
+}
+
+.patient-revoke-button {
+  background-color: #d32f2f;
+}
+
+.patient-doctor-button:hover {
+  filter: brightness(0.9);
+}
+
+/* Toggle Button Fix */
+.patient-doctor-actions-row button {
+  margin-left: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .patient-container {
+    width: 95%;
   }
-  
-  /* Patient Dashboard Container */
-  .patient-dashboard {
-    display: flex;
+
+  .patient-doctor-actions-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .patient-doctor-button {
+    width: 100%;
+  }
+
+  .patient-navbar {
     flex-direction: column;
     align-items: center;
-    padding: 20px;
-  }
-  
-  /* Navbar */
-  .navbar {
-    background-color: #004d40;
-    color: white;
-    width: 100%;
-    padding: 15px 30px;
-    font-size: 24px;
-    font-weight: bold;
-    display: flex;
-    justify-content: center; /* Center the text */
-    align-items: center;
-    position: relative;
-  }
-  
-  /* Logout Button */
-  .logout-button {
-    background-color: #00796b;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    position: absolute;
-    right: 30px;
-  }
-  
-  .logout-button:hover {
-    background-color: #005f56;
-  }
-  
-  /* Dashboard Container with Larger Width */
-  .container {
-    background-color: white;
-    padding: 30px;
-    width: 90%;
-    max-width: 1200px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    margin-top: 20px;
     text-align: center;
   }
-  
-  .container h2 {
-    font-size: 28px;
-    color: #00796b;
+
+  .patient-logout-button {
+    margin-top: 10px;
+    width: 100%;
+    right: 0; /* Reset to fit mobile view */
   }
-  
-  /* Select Dropdown */
-  select {
-    padding: 12px;
-    font-size: 16px;
-    margin: 20px 0;
-    border-radius: 8px;
-    border: 1px solid #00796b;
-    background-color: #e0f7fa;
-    color: #004d40;
-  }
-  
-  /* Doctor Actions Row */
-  .doctor-actions-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f0fdfa;
-    margin: 10px 0;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-  }
-  
-  .doctor-id-display {
-    font-size: 18px;
-    color: #004d40;
-    font-weight: 600;
-  }
-  
-  /* Buttons */
-  .doctor-button {
-    padding: 12px 24px;
-    font-size: 14px;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .view-button {
-    background-color: #00796b;
-  }
-  
-  .accept-button {
-    background-color: #2e7d32;
-  }
-  
-  .revoke-button {
-    background-color: #d32f2f;
-  }
-  
-  .doctor-button:hover {
-    filter: brightness(0.9);
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 900px) {
-    .container {
-      width: 95%;
-    }
-  
-    .doctor-actions-row {
-      flex-direction: column;
-      gap: 10px;
-    }
-  
-    .doctor-button {
-      width: 100%;
-    }
-  
-    .logout-button {
-      position: static;
-      margin-top: 10px;
-    }
-  
-    .navbar {
-      flex-direction: column;
-    }
-  }
-  
+}

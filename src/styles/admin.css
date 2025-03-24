@@ -1,121 +1,106 @@
 /* Reset Styles */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(to right, #b2dfdb, #e0f7fa); /* Light Green Gradient */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
-  /* Admin Container - Bigger Box */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(to right, #b2dfdb, #e0f7fa);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Container */
+.admin-container {
+  width: 100%;
+  max-width: 500px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Title */
+.form-title {
+  font-size: 32px;
+  color: #00796b;
+  margin-bottom: 30px;
+}
+
+/* Input Fields */
+.input-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+input {
+  width: 100%;
+  padding: 15px;
+  border-radius: 30px;
+  border: none;
+  background-color: #ffffff;
+  font-size: 16px;
+  color: #333;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+input::placeholder {
+  color: #999;
+}
+
+input:focus {
+  outline: none;
+  border: 2px solid #00796b;
+}
+
+/* Button Container - Side by Side Buttons */
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Buttons - Add User and Logout */
+.btn, .logout-button {
+  background-color: #00796b;
+  color: white;
+  font-size: 16px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+}
+
+/* Logout Button (Green) */
+.logout-button {
+  background-color:#005f56;
+}
+
+.btn:hover {
+  background-color: #005f56;
+}
+
+.logout-button:hover {
+  background-color:#005f56;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
   .admin-container {
-    width: 100%;
-    max-width: 700px; /* Increased Width */
-    background: rgba(255, 255, 255, 0.4); /* Light Transparent White */
-    backdrop-filter: blur(15px); /* Blur for Glass Effect */
-    border-radius: 20px;
-    padding: 60px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    padding: 30px;
   }
-  
-  /* Title */
-  .admin-title {
-    font-size: 32px;
-    color: #00796b;
-    margin-bottom: 40px; /* Space below Add User */
+
+  .button-container {
+    flex-direction: column;
+    gap: 10px;
   }
-  
-  /* Add Extra Space Below "Add User" */
-  .form-title {
-    font-size: 28px;
-    color: #00796b;
-    margin-bottom: 60px; /* Increased space from Add User to Username */
-  }
-  
-  /* Logout Button */
-  .logout-button {
-    background-color: #00796b;
-    color: white;
-    font-size: 18px;
-    padding: 14px 28px;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    margin-bottom: 30px;
-  }
-  
-  .logout-button:hover {
-    background-color: #005f56;
-  }
-  
-  /* Form Section */
-  .input-group {
-    margin-bottom: 25px;
-    text-align: left;
-  }
-  
-  /* Input Fields */
-  input {
-    width: 100%;
-    padding: 18px;
-    border-radius: 30px;
-    border: none;
-    background-color: #ffffff;
-    font-size: 18px;
-    color: #333;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  }
-  
-  input::placeholder {
-    color: #999;
-  }
-  
-  input:focus {
-    outline: none;
-    border: 2px solid #00796b;
-  }
-  
-  /* Upload File Input */
-  input[type="file"] {
-    background-color: #e0f7fa;
-    padding: 14px;
-    border-radius: 30px;
-  }
-  
-  /* Submit Button */
-  .submit-button {
-    background-color: #00796b;
-    color: white;
-    font-size: 18px;
-    padding: 18px;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    width: 100%;
-  }
-  
-  .submit-button:hover {
-    background-color: #005f56;
-  }
-  
-  .submit-button:disabled {
-    background-color: #b0bec5;
-    cursor: not-allowed;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 480px) {
-    .admin-container {
-      padding: 40px;
-      max-width: 90%;
-    }
-  }
-  
+}
