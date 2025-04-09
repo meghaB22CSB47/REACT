@@ -1,29 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Button,
-  CircularProgress,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-  Alert,
-} from '@mui/material';
-import {
-  VisibilityOutlined,
-  VisibilityOffOutlined,
-  LockOutlined,
-  PersonOutline,
-  HealthAndSafetyOutlined,
-  Business as BusinessIcon
-} from '@mui/icons-material';
+import { FaUser, FaLock, FaBuilding, FaEye, FaEyeSlash, FaHeartbeat } from 'react-icons/fa';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -52,16 +29,6 @@ const Login = () => {
         throw new Error('Please fill in all fields');
       }
 
-      // Special case for admin - for demo purposes
-      if (formData.username === 'admin') {
-        localStorage.setItem('jwt', 'demo-admin-token');
-        localStorage.setItem('username', 'admin');
-        localStorage.setItem('mspId', formData.mspId);
-        setLoading(false); // Important: Need to set loading to false before navigating
-        window.location.href = '/admin';
-        return;
-      }
-
       // Make API request
       const response = await fetch('http://localhost:8080/fabric/login', {
         method: 'POST',
@@ -75,15 +42,20 @@ const Login = () => {
 
       // Extract token and store in localStorage
       const token = await response.text();
+      if (!token.includes('.')) {
+        throw new Error('Invalid token format received from server');
+      }
       localStorage.setItem('jwt', token);
       localStorage.setItem('username', formData.username);
       localStorage.setItem('mspId', formData.mspId);
 
-      // Navigate based on organization using window.location for immediate redirect
+      // Navigate based on organization
       if (formData.mspId === 'Org1MSP') {
         window.location.href = '/doctor';
       } else if (formData.mspId === 'Org2MSP') {
         window.location.href = '/patient';
+      } else if (formData.username === 'admin') {
+        window.location.href = '/admin';
       } else {
         setError('Unknown organization');
       }
@@ -96,201 +68,167 @@ const Login = () => {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        background: 'linear-gradient(135deg, #2C3E50 30%, #3498DB 90%)',
-      }}
-    >
-      {/* Left Side - Branding */}
-      <Box
-        sx={{
-          flex: 1,
-          display: { xs: 'none', md: 'flex' },
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          color: 'white',
-          p: 4,
-          textAlign: 'center',
-        }}
-      >
-        <HealthAndSafetyOutlined sx={{ fontSize: 80, mb: 3 }} />
-        <Typography variant="h2" fontWeight="bold" gutterBottom>
-          HealthLink
-        </Typography>
-        <Typography variant="h5" sx={{ mb: 4 }}>
-          Secure blockchain-based EHR system
-        </Typography>
-        <Box sx={{ maxWidth: 500 }}>
-          <Typography variant="body1" sx={{ opacity: 0.9, mb: 3 }}>
-            Empowering patients with control over their health data while enabling
-            secure collaboration between healthcare providers.
-          </Typography>
-          <Stack 
-            direction="row" 
-            spacing={2} 
-            justifyContent="center"
-            sx={{ 
-              backgroundColor: 'rgba(255,255,255,0.1)', 
-              p: 2, 
-              borderRadius: 2 
-            }}
+    <div className="container-fluid min-vh-100 d-flex align-items-center justify-content-center" 
+      style={{ background: 'linear-gradient(135deg, #2C3E50 30%, #3498DB 90%)', fontFamily: 'Roboto, sans-serif', fontSize: '1.25rem' }}>
+      <div className="row w-100 justify-content-center">
+        {/* Left Side - Branding */}
+        <div className="col-md-6 d-none d-md-flex flex-column align-items-center justify-content-center text-white p-5">
+          <div className="text-center">
+            <FaHeartbeat className="mb-4" style={{ fontSize: '3rem' }} />
+            <h1 className="fw-bold mb-2" style={{ fontSize: '1.75rem' }}>HealthLink</h1>
+            <h4 className="mb-3" style={{ fontSize: '1.25rem', fontWeight: 500 }}>Secure blockchain-based EHR system</h4>
+            
+            <p className="mb-4 opacity-75" style={{ fontSize: '1rem' }}>
+              Empowering patients with control over their health data while enabling 
+              secure collaboration between healthcare providers.
+            </p>
+            
+            <div className="p-3 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
+              <div className="row g-0 text-center">
+                <div className="col-4 p-2">
+                  <h5 className="fw-bold mb-0" style={{ fontSize: '1rem' }}>100%</h5>
+                  <small style={{ fontSize: '0.75rem' }}>Secure</small>
+                </div>
+                <div className="col-4 p-2 border-start border-end" style={{ borderColor: 'rgba(255,255,255,0.3)' }}>
+                  <h5 className="fw-bold mb-0" style={{ fontSize: '1rem' }}>Private</h5>
+                  <small style={{ fontSize: '0.75rem' }}>Control</small>
+                </div>
+                <div className="col-4 p-2">
+                  <h5 className="fw-bold mb-0" style={{ fontSize: '1rem' }}>Trusted</h5>
+                  <small style={{ fontSize: '0.75rem' }}>Blockchain</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Right Side - Login Form */}
+        <div className="col-12 col-md-6 col-lg-5 col-xl-4">
+          <div 
+            className="card shadow-sm border-0" 
+            style={{ borderRadius: '1.5rem', overflow: 'hidden' }}
           >
-            <Box sx={{ p: 2, textAlign: 'center' }}>
-              <Typography variant="h6" fontWeight="bold">
-                100%
-              </Typography>
-              <Typography variant="body2">Secure</Typography>
-            </Box>
-            <Box sx={{ width: '1px', bgcolor: 'rgba(255,255,255,0.3)' }} />
-            <Box sx={{ p: 2, textAlign: 'center' }}>
-              <Typography variant="h6" fontWeight="bold">
-                Private
-              </Typography>
-              <Typography variant="body2">Control</Typography>
-            </Box>
-            <Box sx={{ width: '1px', bgcolor: 'rgba(255,255,255,0.3)' }} />
-            <Box sx={{ p: 2, textAlign: 'center' }}>
-              <Typography variant="h6" fontWeight="bold">
-                Trusted
-              </Typography>
-              <Typography variant="body2">Blockchain</Typography>
-            </Box>
-          </Stack>
-        </Box>
-      </Box>
-
-      {/* Right Side - Login Form */}
-      <Box
-        sx={{
-          width: { xs: '100%', md: '500px' },
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          backgroundColor: 'white',
-          p: { xs: 3, md: 8 },
-          position: 'relative',
-        }}
-      >
-        <Box sx={{ mb: 5, display: { xs: 'block', md: 'none' }, textAlign: 'center' }}>
-          <HealthAndSafetyOutlined sx={{ fontSize: 40, color: '#3498DB', mb: 1 }} />
-          <Typography variant="h4" fontWeight="bold" color="primary">
-            HealthLink
-          </Typography>
-        </Box>
-
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
-          Sign In
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-          Enter your credentials to access your account
-        </Typography>
-
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
-
-        <Box component="form" onSubmit={handleSubmit}>
-          <Stack spacing={3}>
-            <TextField
-              fullWidth
-              label="Username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <PersonOutline color="primary" />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ 
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': {
-                    borderColor: 'rgba(0, 0, 0, 0.23)',
-                  }
-                }
-              }}
-            />
-
-            <FormControl variant="outlined" fullWidth>
-              <InputLabel htmlFor="password">Password</InputLabel>
-              <OutlinedInput
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                value={formData.password}
-                onChange={handleChange}
-                startAdornment={
-                  <InputAdornment position="start">
-                    <LockOutlined color="primary" />
-                  </InputAdornment>
-                }
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
+            <div className="card-body p-5 bg-white">
+              {/* Mobile logo */}
+              <div className="text-center d-md-none mb-3">
+                <FaHeartbeat style={{ fontSize: '2.5rem', color: '#3498DB' }} />
+                <h2 className="fw-bold" style={{ fontSize: '1.75rem', color: '#3498DB' }}>HealthLink</h2>
+              </div>
+              
+              <h2 className="fw-bold mb-3 text-dark" style={{ fontSize: '1.75rem' }}>Sign In</h2>
+              <p className="text-muted mb-4" style={{ fontSize: '1.25rem' }}>Enter your credentials to access your account</p>
+              
+              {error && (
+                <div className="alert alert-danger py-2 px-3" role="alert" style={{ fontSize: '1rem' }}>
+                  {error}
+                </div>
+              )}
+              
+              <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                  <label htmlFor="username" className="form-label text-dark mb-1" style={{ fontSize: '1.125rem' }}>Username</label>
+                  <div className="input-group">
+                    <span className="input-group-text bg-light py-2">
+                      <FaUser className="text-primary" style={{ fontSize: '1.25rem' }} />
+                    </span>
+                    <input
+                      type="text"
+                      className="form-control py-2"
+                      id="username"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      placeholder="Enter username"
+                      style={{ fontSize: '1rem' }}
+                    />
+                  </div>
+                </div>
+                
+                <div className="mb-4">
+                  <label htmlFor="password" className="form-label text-dark mb-1" style={{ fontSize: '1.125rem' }}>Password</label>
+                  <div className="input-group">
+                    <span className="input-group-text bg-light py-2">
+                      <FaLock className="text-primary" style={{ fontSize: '1.25rem' }} />
+                    </span>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className="form-control py-2"
+                      id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      placeholder="Enter password"
+                      style={{ fontSize: '1rem' }}
+                    />
+                    <button 
+                      className="input-group-text bg-light py-2" 
+                      type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
                     >
-                      {showPassword ? <VisibilityOffOutlined /> : <VisibilityOutlined />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-              />
-            </FormControl>
-
-            <FormControl fullWidth>
-              <InputLabel id="msp-id-label">Organization</InputLabel>
-              <Select
-                labelId="msp-id-label"
-                id="mspId"
-                name="mspId"
-                value={formData.mspId}
-                label="Organization"
-                onChange={handleChange}
-                startAdornment={
-                  <InputAdornment position="start">
-                    <BusinessIcon color="primary" />
-                  </InputAdornment>
-                }
-              >
-                <MenuItem value="Org1MSP">Org1MSP (Doctor)</MenuItem>
-                <MenuItem value="Org2MSP">Org2MSP (Patient)</MenuItem>
-              </Select>
-            </FormControl>
-
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              size="large"
-              disabled={loading}
-              sx={{
-                py: 1.5,
-                mt: 2,
-                bgcolor: '#3498DB',
-                '&:hover': { bgcolor: '#2980B9' },
-              }}
-            >
-              {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
-            </Button>
-          </Stack>
-        </Box>
-
-        <Box sx={{ mt: 4, textAlign: 'center' }}>
-          <Typography variant="body2" color="text.secondary">
-            For demo: Use "admin" as username for Admin access
-          </Typography>
-        </Box>
-      </Box>
-    </Box>
+                      {showPassword ? 
+                        <FaEyeSlash className="text-secondary" style={{ fontSize: '1.25rem' }} /> : 
+                        <FaEye className="text-secondary" style={{ fontSize: '1.25rem' }} />
+                      }
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="mb-4">
+                  <label htmlFor="mspId" className="form-label text-dark mb-1" style={{ fontSize: '1.125rem' }}>Organization</label>
+                  <div className="input-group">
+                    <span className="input-group-text bg-light py-2">
+                      <FaBuilding className="text-primary" style={{ fontSize: '1.25rem' }} />
+                    </span>
+                    <select
+                      className="form-select py-2"
+                      id="mspId"
+                      name="mspId"
+                      value={formData.mspId}
+                      onChange={handleChange}
+                      style={{ fontSize: '1rem' }}
+                    >
+                      <option value="">Select Organization</option>
+                      <option value="Org1MSP">Org1MSP (Doctor)</option>
+                      <option value="Org2MSP">Org2MSP (Patient)</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="d-grid">
+                  <button
+                    type="submit"
+                    className="btn btn-primary py-2"
+                    disabled={loading}
+                    style={{ 
+                      backgroundColor: '#3498DB', 
+                      borderColor: '#3498DB',
+                      boxShadow: '0 2px 4px rgba(52, 152, 219, 0.2)',
+                      fontSize: '1rem',
+                      fontWeight: 500
+                    }}
+                  >
+                    {loading ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" style={{ width: '1rem', height: '1rem' }}></span>
+                        Signing in...
+                      </>
+                    ) : (
+                      'Sign In'
+                    )}
+                  </button>
+                </div>
+              </form>
+              
+              <div className="text-center mt-4">
+                <small className="text-muted" style={{ fontSize: '1rem' }}>
+                  For demo: Use "admin" as username for Admin access
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -11,7 +11,11 @@ export const setAuth = (token, username, mspId) => {
 
 // Get authentication token
 export const getToken = () => {
-  return localStorage.getItem('jwt');
+  const token = localStorage.getItem('jwt');
+  if (!token || token.split('.').length !== 3) {
+    throw new Error('Invalid or missing JWT token');
+  }
+  return token;
 };
 
 // Get current user details
@@ -53,40 +57,36 @@ export const logout = () => {
 
 // Helper for making authenticated API requests
 export const fetchWithAuth = async (url, options = {}) => {
-  const token = getToken();
-  
-  if (!token) {
-    throw new Error('No authentication token found');
-  }
-  
+  const token = getToken(); // Ensure token is valid
+
   const defaultOptions = {
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
     },
   };
-  
+
   const mergedOptions = {
     ...defaultOptions,
     ...options,
     headers: {
       ...defaultOptions.headers,
-      ...options.headers
-    }
+      ...options.headers,
+    },
   };
-  
+
   const response = await fetch(url, mergedOptions);
-  
+
   if (!response.ok) {
     const error = await response.text();
     throw new Error(error || 'API request failed');
   }
-  
+
   // Check if response is JSON
   const contentType = response.headers.get('content-type');
   if (contentType && contentType.includes('application/json')) {
     return response.json();
   }
-  
+
   return response.text();
 };

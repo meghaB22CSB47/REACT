@@ -97,14 +97,44 @@ const AdminDashboard = () => {
       
       // Only require file for patient registration (Org2MSP)
       if (adminOrg === 'Org2MSP' && !formData.file && !fileName) {
-        throw new Error('Please upload a PDF file for patient record');
+        throw new Error('Please upload a JSON file for patient record');
       }
 
-      // In a real app, this would be an API call
-      // Simulating API call for demo
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Create FormData object for the file upload
+      const requestFormData = new FormData();
+      requestFormData.append("username", formData.username);
+      requestFormData.append("password", formData.password);
       
-      // Save to local storage for demo purposes
+      // Only append file for patient organization
+      if (adminOrg === 'Org2MSP' && formData.file) {
+        requestFormData.append("file", formData.file);
+      }
+
+      // Ensure JWT is sent as a header
+      const jwt = localStorage.getItem('jwt');
+      console.log(jwt);
+      if (!jwt || jwt.split('.').length !== 3) {
+        throw new Error('Invalid or missing JWT token. Please log in again.');
+      }
+
+      // Make the actual API request to register user
+      const response = await fetch("http://localhost:8080/fabric/register", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${jwt}`,
+        },
+        body: requestFormData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Registration failed. Server returned an error.");
+      }
+
+      // Handle successful response
+      const responseData = await response.text();
+      console.log("Registration successful:", responseData);
+      
+      // Save to local storage for UI demonstration
       const newUser = {
         id: Date.now(),
         username: formData.username,
@@ -170,7 +200,7 @@ const AdminDashboard = () => {
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <PersonAddIcon sx={{ mr: 1, color: 'primary.main' }} />
-                  <Typography variant="h5" component="h2">
+                  <Typography variant="h5" component="h2" style={{ fontFamily: 'Roboto, sans-serif', fontSize: '1.5rem' }}>
                     Register New {adminOrg === 'Org1MSP' ? 'Doctor' : 'Patient'}
                   </Typography>
                 </Box>
@@ -247,14 +277,14 @@ const AdminDashboard = () => {
                           }}
                         >
                           <input
-                            accept=".pdf"
+                            accept=".json"
                             id="file-upload"
                             type="file"
                             hidden
                             onChange={handleFileChange}
                           />
                           <Typography variant="body1" color="text.secondary" gutterBottom>
-                            Upload Patient Health Record (PDF)
+                            Upload Patient Health Record (JSON)
                           </Typography>
                           <label htmlFor="file-upload">
                             <Button
@@ -281,7 +311,7 @@ const AdminDashboard = () => {
                             </Box>
                           ) : (
                             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                              PDF files only, max 10MB
+                              JSON files only, max 10MB
                             </Typography>
                           )}
                           
@@ -380,6 +410,7 @@ const AdminDashboard = () => {
                                 variant="body2"
                                 color="text.secondary"
                                 component="span"
+                                style={{ fontSize: '1rem' }}
                               >
                                 Registered: {new Date(user.createdAt).toLocaleString()}
                               </Typography>

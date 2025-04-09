@@ -261,9 +261,14 @@
 
     // Handle Accept and Revoke button actions
     function handleAction(action, doctorId) {
-        alert(`Doctor Action: ${action} for ${doctorId}`);
-        // Add server-side handling for actions
-        console.log(action);
+        if (!doctorId) {
+            alert('Doctor ID is missing.');
+            return;
+        }
+
+        const loading = document.getElementById('loading');
+        loading.style.display = 'block'; // Show loading animation
+
         fetch(`/fabric/patient/request/${doctorId}?status=${action}`, {
             method: 'POST',
             headers: {
@@ -273,17 +278,24 @@
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error('Failed to perform action. Please try again.');
             }
-            toggleDoctorActions(); // Refresh the doctor actions list
-            return response;
+            return response.json();
         })
-        .then(data => {
-            console.log(data);
-            fetchPendingRequests(); // Refresh the pending requests list
+        .then(() => {
+            alert(`Doctor ${action === 'Accepted' ? 'accepted' : action === 'Rejected' ? 'rejected' : 'updated'} successfully!`);
+            if (action === 'Accepted' || action === 'Rejected') {
+                fetchPendingRequests(); // Refresh pending requests
+            } else {
+                fetchDoctorData(); // Refresh accepted doctors
+            }
         })
         .catch(error => {
             console.error('Error handling doctor action:', error);
+            alert('Failed to perform action. Please try again.');
+        })
+        .finally(() => {
+            loading.style.display = 'none'; // Hide loading animation
         });
     }
 
@@ -360,15 +372,14 @@
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error('Failed to fetch pending requests.');
             }
             return response.json();
         })
         .then(data => {
-            console.log(data);
             const pendingListContent = document.getElementById('pending-list-content');
             pendingListContent.innerHTML = ''; // Clear any existing content
-            data.forEach(doctorId => {
+            data.forEach(doctor => {
                 const doctorDiv = document.createElement('div');
                 doctorDiv.classList.add('container');
 
@@ -377,17 +388,17 @@
 
                 const doctorIdDiv = document.createElement('div');
                 doctorIdDiv.classList.add('doctor-id-display');
-                doctorIdDiv.textContent = `Doctor ID: ${doctorId}`;
+                doctorIdDiv.textContent = `Doctor ID: ${doctor.did}`;
 
                 const acceptButton = document.createElement('button');
                 acceptButton.classList.add('doctor-button', 'accept-button');
                 acceptButton.textContent = 'Accept';
-                acceptButton.onclick = () => handleAction('Accepted', doctorId);
+                acceptButton.onclick = () => handleAction('Accepted', doctor.did);
 
                 const rejectButton = document.createElement('button');
                 rejectButton.classList.add('doctor-button', 'revoke-button');
                 rejectButton.textContent = 'Reject';
-                rejectButton.onclick = () => handleAction('Rejected', doctorId);
+                rejectButton.onclick = () => handleAction('Rejected', doctor.did);
 
                 doctorActionsRow.appendChild(doctorIdDiv);
                 doctorActionsRow.appendChild(acceptButton);
@@ -396,10 +407,10 @@
                 doctorDiv.appendChild(doctorActionsRow);
                 pendingListContent.appendChild(doctorDiv);
             });
-            dataFetched.pending = true; // Set the flag to true after data is fetched
         })
         .catch(error => {
             console.error('Error fetching pending requests:', error);
+            alert('Failed to load pending requests. Please try again.');
         })
         .finally(() => {
             loading.style.display = 'none'; // Hide loading animation

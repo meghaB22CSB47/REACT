@@ -109,19 +109,35 @@ const PatientDashboard = () => {
     window.location.href = '/login';
   };
 
-  const handleAction = async (action, doctorId) => {
+  const handleAction = async (action, doctorId, isPending = false) => {
+    if (!doctorId) {
+      setError('Doctor ID is missing. Please try again.');
+      return;
+    }
+
     setActionLoading(doctorId);
     try {
-      const response = await fetch(`http://localhost:8080/fabric/patient/request/${doctorId}?status=${action}`, {
+      const status = isPending ? 'Accepted' : action; // Use 'Accept' for pending requests, otherwise use the provided action
+      const response = await fetch(`http://localhost:8080/fabric/patient/request/${doctorId}?status=${status}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('jwt')}`
         }
       });
 
-      if (!response.ok) throw new Error(`Failed to ${action.toLowerCase()} doctor`);
+      if (!response.ok) throw new Error(`Failed to ${status.toLowerCase()} doctor`);
       
-      setSuccess(`Doctor ${action === 'Accepted' ? 'accepted' : action === 'Rejected' ? 'rejected' : 'revoked'} successfully!`);
+      setSuccess(`Doctor ${
+        status === 'Accept'
+          ? 'accepted'
+          : status === 'Rejected'
+          ? 'rejected'
+          : status === 'Revoke'
+          ? 'revoked'
+          : status === 'Activate'
+          ? 'activated'
+          : 'updated'
+      } successfully!`);
       fetchDoctorData();
     } catch (error) {
       console.error(error);
@@ -144,16 +160,16 @@ const PatientDashboard = () => {
   const renderDoctorList = (doctors, isPending = false) => {
     if (doctors.length === 0) {
       return (
-        <Paper sx={{ p: 3, textAlign: 'center', bgcolor: 'background.default' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '150px', bgcolor: 'background.default', borderRadius: 2 }}>
           <Typography variant="body1" color="text.secondary">
             No {isPending ? 'pending' : 'accepted'} doctors found.
           </Typography>
-        </Paper>
+        </Box>
       );
     }
 
-    return doctors.map((doctorId) => (
-      <Grid item xs={12} key={doctorId}>
+    return doctors.map((doctor, index) => (
+      <Grid item xs={12} key={`${doctor.requestId || doctor.did}-${isPending ? 'pending' : 'accepted'}-${index}`}>
         <Paper 
           elevation={2}
           sx={{ 
@@ -175,13 +191,13 @@ const PatientDashboard = () => {
             </Avatar>
             <Box>
               <Typography variant="subtitle1" fontWeight={500}>
-                Doctor ID: {doctorId}
+                Doctor ID: {doctor.did}
               </Typography>
               <Chip 
                 size="small" 
-                label={isPending ? "Pending" : "Accepted"} 
-                color={isPending ? "warning" : "success"} 
-                icon={isPending ? <PendingIcon /> : <AcceptedIcon />}
+                label={doctor.status === 'active' ? "Accepted" : "Pending"} 
+                color={doctor.status === 'active' ? "success" : "warning"} 
+                icon={doctor.status === 'active' ? <AcceptedIcon /> : <PendingIcon />}
                 variant="outlined"
                 sx={{ mt: 0.5 }}
               />
@@ -189,51 +205,37 @@ const PatientDashboard = () => {
           </Box>
           
           <Box sx={{ display: 'flex', gap: 1 }}>
-            {isPending ? (
-              <>
-                <Button
-                  variant="contained"
-                  color="success"
-                  size="small"
-                  startIcon={actionLoading === doctorId ? <CircularProgress size={20} color="inherit" /> : <CheckIcon />}
-                  onClick={() => handleAction('Accepted', doctorId)}
-                  disabled={!!actionLoading}
-                >
-                  Accept
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  size="small"
-                  startIcon={actionLoading === doctorId ? <CircularProgress size={20} color="inherit" /> : <CloseIcon />}
-                  onClick={() => handleAction('Rejected', doctorId)}
-                  disabled={!!actionLoading}
-                >
-                  Reject
-                </Button>
-              </>
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              startIcon={<HistoryIcon />}
+              onClick={() => viewHistory(doctor.did)}
+            >
+              View History
+            </Button>
+            {doctor.status === 'active' ? (
+              <Button
+                variant="contained"
+                color="error"
+                size="small"
+                startIcon={actionLoading === doctor.did ? <CircularProgress size={20} color="inherit" /> : <CloseIcon />}
+                onClick={() => handleAction('Revoke', doctor.did)}
+                disabled={!!actionLoading}
+              >
+                Revoke
+              </Button>
             ) : (
-              <>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  size="small"
-                  startIcon={<HistoryIcon />}
-                  onClick={() => viewHistory(doctorId)}
-                >
-                  View History
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  size="small"
-                  startIcon={actionLoading === doctorId ? <CircularProgress size={20} color="inherit" /> : <CloseIcon />}
-                  onClick={() => handleAction('Revoke', doctorId)}
-                  disabled={!!actionLoading}
-                >
-                  Revoke
-                </Button>
-              </>
+              <Button
+                variant="contained"
+                color="success"
+                size="small"
+                startIcon={actionLoading === doctor.did ? <CircularProgress size={20} color="inherit" /> : <CheckIcon />}
+                onClick={() => handleAction('Accepted', doctor.did, isPending)}
+                disabled={!!actionLoading}
+              >
+                {isPending ? 'Accept' : 'Activate'}
+              </Button>
             )}
           </Box>
         </Paper>

@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+// Bootstrap components
+import 'bootstrap/dist/css/bootstrap.min.css';
+// MUI Theme Provider for consistent styling
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline } from '@mui/material';
-import './styles/global.css';
+import CssBaseline from '@mui/material/CssBaseline';
+import { AppBar, Toolbar, Typography, IconButton } from '@mui/material';
+import { Brightness4 as DarkModeIcon, Brightness7 as LightModeIcon } from '@mui/icons-material';
 
 // Import components
 import Login from './components/Login';
@@ -15,138 +19,42 @@ import Home from './components/Home';
 import NotFound from './components/NotFound';
 import LoadingScreen from './components/LoadingScreen';
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#2C3E50',
-    },
-    secondary: {
-      main: '#3498DB',
-    },
-    success: {
-      main: '#2ECC71',
-    },
-    error: {
-      main: '#E74C3C',
-    },
-    background: {
-      default: '#F8FAFC',
-    },
-  },
-  typography: {
-    fontFamily: '"Outfit", "Roboto", "Helvetica", "Arial", sans-serif',
-    fontSize: 14, // Base font size reduced
-    h1: {
-      fontWeight: 600,
-      fontSize: '2.5rem', // Reduced from 3rem+
-    },
-    h2: {
-      fontWeight: 600,
-      fontSize: '2rem', // Reduced
-    },
-    h3: {
-      fontWeight: 600,
-      fontSize: '1.5rem', // Reduced
-    },
-    h4: {
-      fontWeight: 600,
-      fontSize: '1.25rem', // Reduced
-    },
-    h5: {
-      fontWeight: 500,
-      fontSize: '1.1rem', // Reduced
-    },
-    h6: {
-      fontWeight: 500,
-      fontSize: '0.95rem', // Reduced
-    },
-    body1: {
-      fontSize: '0.9rem', // Reduced
-    },
-    body2: {
-      fontSize: '0.85rem', // Reduced
-    },
-    button: {
-      textTransform: 'none', // More modern look without uppercase
-      fontWeight: 500,
-    },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: 8,
-          fontWeight: 500,
-          boxShadow: 'none',
-          padding: '8px 16px', // Slightly smaller padding
-        },
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: 12,
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
-        },
-      },
-    },
-    MuiOutlinedInput: {
-      styleOverrides: {
-        root: {
-          '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#3498DB',
-          },
-          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#3498DB',
-          },
-        },
-        notchedOutline: {
-          borderColor: 'rgba(0, 0, 0, 0.23)',
-        }
-      }
-    },
-    MuiTableCell: {
-      styleOverrides: {
-        root: {
-          padding: '12px 16px', // More compact table cells
-          fontSize: '0.85rem',
-        },
-        head: {
-          fontWeight: 600,
-        },
-      }
-    },
-    MuiChip: {
-      styleOverrides: {
-        root: {
-          fontSize: '0.75rem',
-        },
-      }
-    },
-    MuiListItemText: {
-      styleOverrides: {
-        primary: {
-          fontSize: '0.9rem',
-        },
-        secondary: {
-          fontSize: '0.8rem',
-        }
-      }
-    },
-    MuiToolbar: {
-      styleOverrides: {
-        root: {
-          minHeight: '60px !important', // Smaller toolbar
-        }
-      }
-    },
-  },
-});
-
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
+
+  const theme = createTheme({
+    palette: {
+      mode: darkMode ? 'dark' : 'light',
+      primary: {
+        main: '#4A90E2',
+      },
+      secondary: {
+        main: '#34495E',
+      },
+      background: {
+        default: darkMode ? '#121212' : '#F4F6F8',
+        paper: darkMode ? '#1E1E1E' : '#FFFFFF',
+      },
+      text: {
+        primary: darkMode ? '#FFFFFF' : '#2C3E50',
+        secondary: darkMode ? '#B0BEC5' : '#7F8C8D',
+      },
+    },
+    typography: {
+      fontFamily: "'Roboto', sans-serif",
+      fontSize: 18,
+    },
+    shape: {
+      borderRadius: 10,
+    },
+  });
+
+  const toggleDarkMode = () => {
+    setDarkMode((prev) => !prev);
+  };
 
   useEffect(() => {
     // Check authentication status on component mount
@@ -186,6 +94,16 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
+        <AppBar position="fixed" color="primary">
+          <Toolbar>
+            <Typography variant="h6" sx={{ flexGrow: 1 }}>
+              HealthLink
+            </Typography>
+            <IconButton color="inherit" onClick={toggleDarkMode}>
+              {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+            </IconButton>
+          </Toolbar>
+        </AppBar>
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<Home />} />

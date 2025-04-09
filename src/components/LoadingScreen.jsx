@@ -1,30 +1,15 @@
 import React from 'react';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { FaHeartbeat } from 'react-icons/fa';
 
 const LoadingScreen = () => {
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        backgroundColor: '#F8FAFC',
-      }}
-    >
-      <CircularProgress size={60} sx={{ color: '#3498DB' }} />
-      <Typography 
-        variant="h5" 
-        sx={{ 
-          mt: 3, 
-          fontWeight: 500,
-          color: '#2C3E50'
-        }}
-      >
-        Loading HealthLink...
-      </Typography>
-    </Box>
+    <div className="d-flex flex-column justify-content-center align-items-center min-vh-100 bg-light">
+      <FaHeartbeat className="text-primary mb-3" style={{ fontSize: '2.5rem' }} />
+      <div className="spinner-border text-primary mb-3" role="status" style={{ width: '1.5rem', height: '1.5rem' }}>
+        <span className="visually-hidden">Loading...</span>
+      </div>
+      <h4 className="fw-bold text-secondary" style={{ fontSize: '1.125rem' }}>Loading HealthLink...</h4>
+    </div>
   );
 };
 

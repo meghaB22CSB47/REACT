@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
-import './styles/global.css';
+// Bootstrap CSS is imported in index.html via CDN
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

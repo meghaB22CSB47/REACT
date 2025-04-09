@@ -1,269 +1,168 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-  Button,
-  Grid,
-  Card,
-  CardContent,
-  AppBar,
-  Toolbar,
-  Divider,
-  Paper
-} from '@mui/material';
-import {
-  Security as SecurityIcon,
-  Lock as LockIcon,
-  Devices as DevicesIcon,
-  HealthAndSafety as HealthAndSafetyIcon
-} from '@mui/icons-material';
+import { Link } from 'react-router-dom';
+import { FaShieldAlt, FaLock, FaTabletAlt, FaHeartbeat, FaCheckCircle, FaUserPlus, FaExchangeAlt } from 'react-icons/fa';
+import { IconButton } from '@mui/material';
+import { Brightness4 as DarkModeIcon, Brightness7 as LightModeIcon } from '@mui/icons-material';
 
-const Home = () => {
-  const navigate = useNavigate();
-
+const Home = ({ darkMode, toggleDarkMode }) => {
   const features = [
     {
       title: 'Secure Data Management',
       description: 'Blockchain ensures tamper-proof medical records with comprehensive audit trails.',
-      icon: <SecurityIcon fontSize="large" color="primary" />
+      icon: <FaShieldAlt className="text-primary" style={{ fontSize: '1.5rem' }} />
     },
     {
       title: 'Enhanced Privacy',
       description: 'Patients retain complete ownership and granular control over their medical data.',
-      icon: <LockIcon fontSize="large" color="primary" />
+      icon: <FaLock className="text-primary" style={{ fontSize: '1.5rem' }} />
     },
     {
       title: 'Seamless Access',
       description: 'Healthcare providers access records with patient consent through a streamlined process.',
-      icon: <DevicesIcon fontSize="large" color="primary" />
+      icon: <FaTabletAlt className="text-primary" style={{ fontSize: '1.5rem' }} />
     }
   ];
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      {/* Header/Navigation */}
-      <AppBar position="static" elevation={0}>
-        <Toolbar>
-          <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-            <HealthAndSafetyIcon sx={{ fontSize: 28, mr: 1 }} />
-            <Typography variant="h5" component="div" fontWeight={600}>
-              HealthLink
-            </Typography>
-          </Box>
-          <Button 
-            variant="contained" 
-            color="secondary"
-            onClick={() => window.location.href = '/login'}
-            sx={{ 
-              borderRadius: 2,
-              boxShadow: 2,
-              fontWeight: 500,
-              px: 3
-            }}
-          >
-            Login
-          </Button>
-        </Toolbar>
-      </AppBar>
+    <div className="d-flex flex-column min-vh-100">
+      {/* Navigation */}
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark py-3" style={{ width: '100%' }}>
+        <div className="container">
+          <Link className="navbar-brand d-flex align-items-center" to="/">
+            <FaHeartbeat className="me-2" style={{ fontSize: '1.5rem' }} />
+            <span className="fw-bold" style={{ fontSize: '1.25rem' }}>HealthLink</span>
+          </Link>
+          <IconButton color="inherit" onClick={toggleDarkMode} className="ms-auto">
+            {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+          </IconButton>
+        </div>
+      </nav>
 
       {/* Hero Section */}
-      <Box 
-        sx={{ 
-          py: 10, 
-          background: 'linear-gradient(120deg, #2C3E50 30%, #3498DB 90%)',
-          color: 'white'
-        }}
-      >
-        <Container maxWidth="md">
-          <Grid container spacing={3} alignItems="center">
-            <Grid item xs={12} md={7}>
-              <Typography variant="h2" fontWeight={700} gutterBottom>
-                Secure Health Records on Blockchain
-              </Typography>
-              <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
-                HealthLink provides a decentralized platform for managing Electronic Health Records (EHR) with security, privacy, and patient control.
-              </Typography>
-              <Button 
-                variant="contained" 
-                size="large"
-                onClick={() => window.location.href = '/login'}
-                sx={{ 
-                  borderRadius: 2,
-                  py: 1.5,
-                  px: 4,
-                  fontSize: '1.1rem',
-                  fontWeight: 500,
-                  backgroundColor: '#1ABC9C',
-                  '&:hover': {
-                    backgroundColor: '#16A085'
-                  }
-                }}
-              >
+      <header className="py-5 text-white" style={{ background: 'linear-gradient(120deg, #2C3E50 30%, #3498DB 90%)' }}>
+        <div className="container">
+          <div className="row align-items-center g-4">
+            <div className="col-lg-7">
+              <h1 className="fw-bold mb-3" style={{ fontSize: '2.25rem' }}>Secure Health Records on Blockchain</h1>
+              <p className="mb-4" style={{ fontSize: '1.125rem' }}>
+                HealthLink provides a decentralized platform for managing Electronic Health Records (EHR) 
+                with security, privacy, and patient control.
+              </p>
+              <Link to="/login" className="btn btn-success px-4 py-3" style={{ fontSize: '1.125rem' }}>
                 Get Started
-              </Button>
-            </Grid>
-            <Grid item xs={12} md={5}>
-              <Box 
-                component="img"
-                src="https://cdn.pixabay.com/photo/2017/10/04/09/56/laboratory-2815640_1280.jpg"
-                alt="Healthcare"
-                sx={{ 
-                  width: '100%',
-                  borderRadius: 3,
-                  boxShadow: 3
-                }}
+              </Link>
+            </div>
+            <div className="col-lg-5">
+              <img 
+                src="https://cdn.pixabay.com/photo/2017/10/04/09/56/laboratory-2815640_1280.jpg" 
+                className="img-fluid rounded shadow-sm" 
+                alt="Healthcare" 
               />
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
+            </div>
+          </div>
+        </div>
+      </header>
 
       {/* Features Section */}
-      <Box sx={{ py: 8, bgcolor: 'background.paper' }}>
-        <Container maxWidth="lg">
-          <Typography variant="h3" fontWeight={600} textAlign="center" gutterBottom>
-            Key Features
-          </Typography>
-          <Typography variant="h6" textAlign="center" color="text.secondary" sx={{ mb: 6 }}>
-            Built on Hyperledger Fabric for enterprise-grade security and performance
-          </Typography>
+      <section className="py-4 bg-light">
+        <div className="container">
+          <div className="text-center mb-4">
+            <h2 className="fw-bold" style={{ fontSize: '2rem' }}>Key Features</h2>
+            <p className="text-muted" style={{ fontSize: '1.125rem' }}>Built on Hyperledger Fabric for enterprise-grade security and performance</p>
+          </div>
           
-          <Grid container spacing={4}>
+          <div className="row g-3">
             {features.map((feature, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                <Card 
-                  sx={{ 
-                    height: '100%', 
-                    display: 'flex', 
-                    flexDirection: 'column',
-                    transition: 'transform 0.3s, box-shadow 0.3s',
-                    '&:hover': {
-                      transform: 'translateY(-5px)',
-                      boxShadow: 4
-                    }
-                  }}
-                >
-                  <CardContent sx={{ flexGrow: 1, textAlign: 'center', p: 4 }}>
-                    <Box sx={{ mb: 2 }}>
+              <div className="col-md-4" key={index}>
+                <div className="card h-100 border-0 shadow-sm">
+                  <div className="card-body text-center p-3">
+                    <div className="mb-2">
                       {feature.icon}
-                    </Box>
-                    <Typography variant="h5" component="h3" fontWeight={600} gutterBottom>
-                      {feature.title}
-                    </Typography>
-                    <Typography variant="body1" color="text.secondary">
-                      {feature.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
+                    </div>
+                    <h4 className="fw-bold mb-2" style={{ fontSize: '1.125rem' }}>{feature.title}</h4>
+                    <p className="text-muted mb-0" style={{ fontSize: '1rem' }}>{feature.description}</p>
+                  </div>
+                </div>
+              </div>
             ))}
-          </Grid>
-        </Container>
-      </Box>
+          </div>
+        </div>
+      </section>
 
       {/* How It Works Section */}
-      <Box sx={{ py: 8, bgcolor: '#F8FAFC' }}>
-        <Container maxWidth="lg">
-          <Typography variant="h3" fontWeight={600} textAlign="center" gutterBottom>
-            How It Works
-          </Typography>
-          <Typography variant="h6" textAlign="center" color="text.secondary" sx={{ mb: 6 }}>
-            A seamless workflow for managing healthcare data
-          </Typography>
+      <section className="py-4">
+        <div className="container">
+          <div className="text-center mb-4">
+            <h2 className="fw-bold" style={{ fontSize: '2rem' }}>How It Works</h2>
+            <p className="text-muted" style={{ fontSize: '1.125rem' }}>A seamless workflow for managing healthcare data</p>
+          </div>
           
-          <Paper elevation={2} sx={{ p: 4, borderRadius: 3 }}>
-            <Grid container spacing={4}>
-              <Grid item xs={12} md={4}>
-                <Box sx={{ textAlign: 'center', p: 2 }}>
-                  <Typography variant="h4" color="primary" fontWeight={700} sx={{ mb: 1 }}>
-                    01
-                  </Typography>
-                  <Typography variant="h6" fontWeight={600}>
-                    Patient Registers
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-                    Patients create an account and maintain control of their medical records.
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Box sx={{ textAlign: 'center', p: 2 }}>
-                  <Typography variant="h4" color="primary" fontWeight={700} sx={{ mb: 1 }}>
-                    02
-                  </Typography>
-                  <Typography variant="h6" fontWeight={600}>
-                    Doctor Requests Access
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-                    Healthcare providers request permission to view patient records.
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Box sx={{ textAlign: 'center', p: 2 }}>
-                  <Typography variant="h4" color="primary" fontWeight={700} sx={{ mb: 1 }}>
-                    03
-                  </Typography>
-                  <Typography variant="h6" fontWeight={600}>
-                    Secure Collaboration
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-                    Permissioned access allows healthcare coordination with full auditability.
-                  </Typography>
-                </Box>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Container>
-      </Box>
+          <div className="card border-0 shadow-sm">
+            <div className="card-body p-3">
+              <div className="row g-3">
+                <div className="col-md-4 text-center">
+                  <div className="p-2">
+                    <h3 className="text-primary fw-bold mb-2" style={{ fontSize: '1.25rem' }}>01</h3>
+                    <h5 className="fw-bold mb-1" style={{ fontSize: '1rem' }}>Patient Registers</h5>
+                    <p className="text-muted mb-2" style={{ fontSize: '0.875rem' }}>
+                      Patients create an account and maintain control of their medical records.
+                    </p>
+                    <FaUserPlus className="text-primary" style={{ fontSize: '1.25rem' }} />
+                  </div>
+                </div>
+                <div className="col-md-4 text-center">
+                  <div className="p-2">
+                    <h3 className="text-primary fw-bold mb-2" style={{ fontSize: '1.25rem' }}>02</h3>
+                    <h5 className="fw-bold mb-1" style={{ fontSize: '1rem' }}>Doctor Requests Access</h5>
+                    <p className="text-muted mb-2" style={{ fontSize: '0.875rem' }}>
+                      Healthcare providers request permission to view patient records.
+                    </p>
+                    <FaExchangeAlt className="text-primary" style={{ fontSize: '1.25rem' }} />
+                  </div>
+                </div>
+                <div className="col-md-4 text-center">
+                  <div className="p-2">
+                    <h3 className="text-primary fw-bold mb-2" style={{ fontSize: '1.25rem' }}>03</h3>
+                    <h5 className="fw-bold mb-1" style={{ fontSize: '1rem' }}>Secure Collaboration</h5>
+                    <p className="text-muted mb-2" style={{ fontSize: '0.875rem' }}>
+                      Permissioned access allows healthcare coordination with full auditability.
+                    </p>
+                    <FaCheckCircle className="text-primary" style={{ fontSize: '1.25rem' }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
-      <Box 
-        component="footer" 
-        sx={{ 
-          py: 4, 
-          bgcolor: 'primary.main', 
-          color: 'white',
-          mt: 'auto'
-        }}
-      >
-        <Container maxWidth="lg">
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={6}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <HealthAndSafetyIcon sx={{ fontSize: 24, mr: 1 }} />
-                <Typography variant="h6" fontWeight={600}>
-                  HealthLink
-                </Typography>
-              </Box>
-              <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                Revolutionizing healthcare data management through blockchain technology. 
+      <footer className="bg-dark text-white py-3 mt-auto">
+        <div className="container">
+          <div className="row g-3">
+            <div className="col-md-6">
+              <div className="d-flex align-items-center mb-1">
+                <FaHeartbeat className="me-1" style={{ fontSize: '0.875rem' }} />
+                <h5 className="mb-0 fw-bold" style={{ fontSize: '0.9375rem' }}>HealthLink</h5>
+              </div>
+              <p className="small opacity-75 mb-2" style={{ fontSize: '0.75rem' }}>
+                Revolutionizing healthcare data management through blockchain technology.
                 Secure, private, and patient-centered.
-              </Typography>
-            </Grid>
-            <Grid item xs={12} md={6} sx={{ display: 'flex', justifyContent: { md: 'flex-end' } }}>
-              <Box>
-                <Typography variant="subtitle1" fontWeight={600}>
-                  Contact Us
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                  support@healthlink.com
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                  +1 (555) 123-4567
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
-          <Divider sx={{ my: 3, borderColor: 'rgba(255,255,255,0.2)' }} />
-          <Typography variant="body2" align="center" sx={{ opacity: 0.7 }}>
-            © 2025 HealthLink. All rights reserved.
-          </Typography>
-        </Container>
-      </Box>
-    </Box>
+              </p>
+            </div>
+            <div className="col-md-6 text-md-end">
+              <h6 className="fw-bold mb-1" style={{ fontSize: '0.875rem' }}>Contact Us</h6>
+              <p className="small opacity-75 mb-0" style={{ fontSize: '0.75rem' }}>support@healthlink.com</p>
+              <p className="small opacity-75 mb-0" style={{ fontSize: '0.75rem' }}>+1 (555) 123-4567</p>
+            </div>
+          </div>
+          <hr className="my-2 opacity-25" />
+          <div className="text-center">
+            <p className="small opacity-75 mb-0" style={{ fontSize: '0.75rem' }}>© 2025 HealthLink. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 };
 
