@@ -125,7 +125,9 @@ const DoctorHistory = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <AppBar position="fixed" color="primary">
+      <AppBar position="fixed" color="primary" sx={{
+          background: '#0A5741'    
+        }}>
         <Toolbar>
           <HistoryIcon sx={{ mr: 2 }} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -152,8 +154,8 @@ const DoctorHistory = () => {
       <Container maxWidth="lg" sx={{ mt: 10, mb: 4, flex: 1 }}>
         <Card>
           <CardContent>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <AccountCircleIcon sx={{ mr: 1, color: 'primary.main' }} />
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 ,color : '#09B135'}}>
+              <AccountCircleIcon sx={{ mr: 1, color: '#09B135' }} />
               <Typography variant="h5" component="h2">
                 Doctor Access History
               </Typography>

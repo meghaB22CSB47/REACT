@@ -39,6 +39,7 @@ const Home = ({ darkMode, toggleDarkMode }) => {
       </nav>
 
       {/* Hero Section */}
+      {/* 1st part with get started*/}
       <header className="py-5 text-white" style={{ background: 'linear-gradient(120deg, #2C3E50 30%, #3498DB 90%)' }}>
         <div className="container">
           <div className="row align-items-center g-4">
@@ -153,7 +154,6 @@ const Home = ({ darkMode, toggleDarkMode }) => {
             <div className="col-md-6 text-md-end">
               <h6 className="fw-bold mb-1" style={{ fontSize: '0.875rem' }}>Contact Us</h6>
               <p className="small opacity-75 mb-0" style={{ fontSize: '0.75rem' }}>support@healthlink.com</p>
-              <p className="small opacity-75 mb-0" style={{ fontSize: '0.75rem' }}>+1 (555) 123-4567</p>
             </div>
           </div>
           <hr className="my-2 opacity-25" />

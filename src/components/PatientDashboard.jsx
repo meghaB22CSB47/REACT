@@ -19,7 +19,9 @@ import {
   Alert,
   Snackbar,
   IconButton,
-  Chip
+  Chip,
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import {
   Logout as LogoutIcon,
@@ -30,7 +32,8 @@ import {
   PersonOutline as DoctorIcon,
   Refresh as RefreshIcon,
   AccessTime as PendingIcon,
-  CheckCircleOutline as AcceptedIcon
+  CheckCircleOutline as AcceptedIcon,
+  Dashboard as DashboardIcon
 } from '@mui/icons-material';
 import { logout } from '../utils/auth';
 
@@ -44,6 +47,8 @@ const PatientDashboard = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetchDoctorData();
@@ -158,59 +163,97 @@ const PatientDashboard = () => {
 
   // Render doctor list items
   const renderDoctorList = (doctors, isPending = false) => {
-    if (doctors.length === 0) {
-      return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '150px', bgcolor: 'background.default', borderRadius: 2 }}>
-          <Typography variant="body1" color="text.secondary">
-            No {isPending ? 'pending' : 'accepted'} doctors found.
-          </Typography>
-        </Box>
-      );
-    }
+    // if (doctors.length === 0) {
+    //   return (
+    //     <Box sx={{ 
+    //       width: '100%', 
+    //       display: 'flex', 
+    //       flexDirection: 'column',
+    //       justifyContent: 'center', 
+    //       alignItems: 'center', 
+    //       height: '200px', 
+    //       bgcolor: 'background.grey', 
+    //       borderRadius: 2,
+    //       border: '1px dashed',
+    //       borderColor: 'divider'
+    //     }}>
+    //       <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+    //         No {isPending ? 'pending' : 'accepted'} doctors found.
+    //       </Typography>
+    //     </Box>
+    //   );
+    // }
 
     return doctors.map((doctor, index) => (
       <Grid item xs={12} key={`${doctor.requestId || doctor.did}-${isPending ? 'pending' : 'accepted'}-${index}`}>
         <Paper 
-          elevation={2}
+          elevation={3}
           sx={{ 
-            p: 2,
+            p: 2.5,
             display: 'flex',
-            alignItems: 'center',
+            flexDirection: isMobile ? 'column' : 'row',
+            alignItems: isMobile ? 'flex-start' : 'center',
             justifyContent: 'space-between',
             borderRadius: 2,
-            transition: 'all 0.3s ease',
+            transition: 'all 0.2s ease',
             '&:hover': {
-              boxShadow: 3,
-              transform: 'translateY(-2px)',
-            }
+              boxShadow: 6,
+              transform: 'translateY(-3px)',
+              bgcolor: 'background.paper'
+            },
+            border: '1px solid',
+            borderColor: 'divider'
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>
-              <DoctorIcon />
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            mb: isMobile ? 2 : 0,
+            width: isMobile ? '100%' : 'auto'
+          }}>
+            <Avatar 
+              sx={{ 
+                bgcolor:'#0B8A67', // Changed colors
+                mr: 2,
+                width: 50,
+                height: 50,
+                boxShadow: 1
+              }}
+            >
+              <DoctorIcon fontSize="large" />
             </Avatar>
             <Box>
-              <Typography variant="subtitle1" fontWeight={500}>
+              <Typography variant="h6" fontWeight={600} sx={{ lineHeight: 1.2 }}>
                 Doctor ID: {doctor.did}
               </Typography>
               <Chip 
                 size="small" 
-                label={doctor.status === 'active' ? "Accepted" : "Pending"} 
+                label={doctor.status === 'active' ? "Accepted & Active" : "Pending Approval"} 
                 color={doctor.status === 'active' ? "success" : "warning"} 
                 icon={doctor.status === 'active' ? <AcceptedIcon /> : <PendingIcon />}
-                variant="outlined"
-                sx={{ mt: 0.5 }}
+                sx={{ mt: 1, borderRadius: 1, fontWeight: 500 }}
               />
             </Box>
           </Box>
           
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <Box sx={{ 
+            display: 'flex', 
+            gap: 1.5,
+            width: isMobile ? '100%' : 'auto',
+            justifyContent: isMobile ? 'space-between' : 'flex-end',
+            mt: isMobile ? 1 : 0
+          }}>
             <Button
               variant="outlined"
               color="primary"
-              size="small"
+              size={isMobile ? "medium" : "small"}
               startIcon={<HistoryIcon />}
               onClick={() => viewHistory(doctor.did)}
+              fullWidth={isMobile}
+              sx={{ 
+                borderRadius: 1.5,
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+              }}
             >
               View History
             </Button>
@@ -218,23 +261,35 @@ const PatientDashboard = () => {
               <Button
                 variant="contained"
                 color="error"
-                size="small"
+                size={isMobile ? "medium" : "small"}
                 startIcon={actionLoading === doctor.did ? <CircularProgress size={20} color="inherit" /> : <CloseIcon />}
                 onClick={() => handleAction('Revoke', doctor.did)}
                 disabled={!!actionLoading}
+                fullWidth={isMobile}
+                sx={{ 
+                  borderRadius: 1.5,
+                  boxShadow: '0 2px 5px rgba(211, 47, 47, 0.3)',
+                  bgcolor: '#FF6B6B' // Changed color
+                }}
               >
-                Revoke
+                Revoke Access
               </Button>
             ) : (
               <Button
                 variant="contained"
                 color="success"
-                size="small"
+                size={isMobile ? "medium" : "small"}
                 startIcon={actionLoading === doctor.did ? <CircularProgress size={20} color="inherit" /> : <CheckIcon />}
                 onClick={() => handleAction('Accepted', doctor.did, isPending)}
                 disabled={!!actionLoading}
+                fullWidth={isMobile}
+                sx={{ 
+                  borderRadius: 1.5,
+                  boxShadow: '0 2px 5px rgba(46, 125, 50, 0.3)',
+                  bgcolor: '#4CAF50' // Changed color
+                }}
               >
-                {isPending ? 'Accept' : 'Activate'}
+                {isPending ? 'Accept Request' : 'Activate Access'}
               </Button>
             )}
           </Box>
@@ -244,114 +299,247 @@ const PatientDashboard = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <AppBar position="fixed" color="primary">
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      minHeight: '100vh',
+      bgcolor: theme.palette.mode === 'light' ? '#fff' : '#121212'
+    }}>
+      {/* Changed header color */}
+      <AppBar 
+        position="fixed" 
+        color="primary" 
+        elevation={4}
+        sx={{
+          background: '#0A5741' // Changed from #0A5741 to Steel Blue
+        }}
+      >
         <Toolbar>
-          <PersonIcon sx={{ mr: 2 }} />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Patient Dashboard
-          </Typography>
-          <Button 
-            color="inherit" 
-            onClick={handleLogout}
-            startIcon={<LogoutIcon />}
-          >
-            Logout
-          </Button>
-        </Toolbar>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <DoctorIcon sx={{ fontSize: 28, mr: 1 }} />
+                        <Typography variant="h5" component="div" fontWeight="600">
+                          HealthLink
+                        </Typography>
+            </Box>
+         
+            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+                        <Typography 
+                          variant="h6" 
+                          component="div" 
+                          sx={{ 
+                            fontWeight: 500,
+                            display: { xs: 'none', md: 'block' } 
+                          }}
+                        >
+                          Patient Dashboard
+                        </Typography>
+              </Box>
+            <Button 
+              color="inherit" 
+              onClick={handleLogout}
+              startIcon={<LogoutIcon />}
+              sx={{ 
+                borderRadius: 2,
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                }
+              }}
+            >
+              Logout
+            </Button>
+          </Toolbar>
       </AppBar>
       
-      <Container maxWidth="lg" sx={{ mt: 10, mb: 4, flex: 1 }}>
-        <Card sx={{ mb: 3 }}>
-          <CardContent>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-              <Typography variant="h5" component="h2">
-                Doctor Access Management
-              </Typography>
-              <Button
-                variant="outlined"
-                color="primary"
-                startIcon={refreshing ? <CircularProgress size={20} /> : <RefreshIcon />}
-                onClick={handleRefresh}
-                disabled={refreshing}
-              >
-                Refresh
-              </Button>
+      <Container maxWidth="lg" sx={{ mt: 12, mb: 6, flex: 1 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Card elevation={4} sx={{ borderRadius: 3, overflow: 'hidden' }}>
+            <Box sx={{ 
+              p: 2, 
+              background: "#09B135", // Changed from #09B135 to Cadet Blue
+              borderBottom: '1px solid',
+              borderColor: 'divider'
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <PersonIcon sx={{ mr: 1.5, color: 'white', fontSize: 28 }} />
+                  <Typography variant="h5" component="h1" fontWeight={600} color="white">
+                    Doctor Access Management
+                  </Typography>
+                </Box>
+              </Box>
             </Box>
-            <Divider />
             
             <Tabs
               value={tabValue}
               onChange={handleTabChange}
               variant="fullWidth"
-              sx={{ mt: 2 }}
+              sx={{
+                background: theme.palette.background.paper,
+                '& .MuiTab-root': {
+                  py: 2,
+                  fontWeight: 500,
+                  fontSize: '1rem',
+                  transition: 'all 0.2s',
+                  '&.Mui-selected': {
+                    fontWeight: 600,
+                    color: '#0B8A67' // Changed tab selection color
+                  }
+                }
+              }}
+              TabIndicatorProps={{
+                sx: { height: 3, borderRadius: '3px 3px 0 0', backgroundColor: '#09B135' } // Changed indicator color
+              }}
             >
               <Tab 
-                label="Accepted Doctors" 
-                icon={<AcceptedIcon />} 
-                iconPosition="start"
+                label={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <AcceptedIcon fontSize="small" />
+                    <Typography component="span">
+                      Accepted Doctors
+                      {acceptedDoctors.length > 0 && 
+                        <Chip 
+                          label={acceptedDoctors.length} 
+                          size="small" 
+                          color="success" 
+                          sx={{ ml: 1, height: 20, minWidth: 20, fontSize: '0.7rem', bgcolor: '#09B135' }} // Changed chip color
+                        />
+                      }
+                    </Typography>
+                  </Box>
+                } 
               />
               <Tab 
-                label="Pending Requests" 
-                icon={<PendingIcon />} 
-                iconPosition="start"
+                label={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <PendingIcon fontSize="small" />
+                    <Typography component="span">
+                      Pending Requests
+                      {pendingDoctors.length > 0 && 
+                        <Chip 
+                          label={pendingDoctors.length} 
+                          size="small" 
+                          color="warning" 
+                          sx={{ ml: 1, height: 20, minWidth: 20, fontSize: '0.7rem', bgcolor: '#09B135' }} // Changed chip color
+                        />
+                      }
+                    </Typography>
+                  </Box>
+                }
               />
             </Tabs>
-          </CardContent>
-        </Card>
-        
-        {loading && !refreshing ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <Box sx={{ mt: 2 }}>
-            {tabValue === 0 && (
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Accepted Doctors
-                  </Typography>
-                  <Divider sx={{ mb: 3 }} />
-                  <Grid container spacing={2}>
-                    {renderDoctorList(acceptedDoctors)}
-                  </Grid>
-                </CardContent>
-              </Card>
-            )}
-            
-            {tabValue === 1 && (
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Pending Requests
-                  </Typography>
-                  <Divider sx={{ mb: 3 }} />
-                  <Grid container spacing={2}>
-                    {renderDoctorList(pendingDoctors, true)}
-                  </Grid>
-                </CardContent>
-              </Card>
-            )}
-          </Box>
-        )}
+          </Card>
+          
+          {loading && !refreshing ? (
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center', 
+              p: 6,
+              height: '300px',
+              borderRadius: 3,
+              bgcolor: 'background.paper',
+              flexDirection: 'column',
+              gap: 2,
+              boxShadow: 2
+            }}>
+              <CircularProgress size={50} sx={{ color: '#4682B4' }} /> {/* Changed color */}
+              <Typography variant="h6" color="text.secondary">
+                Loading doctor information...
+              </Typography>
+            </Box>
+          ) : (
+            <Box sx={{ mt: 1 }}>
+              {tabValue === 0 && (
+                <Card elevation={3} sx={{ borderRadius: 3, overflow: 'hidden' }}>
+                  <CardContent sx={{ p: 0 }}>
+                    <Box sx={{ 
+                      p: 3, 
+                      backgroundColor: '#09B135', // Changed from primary.main to Steel Blue
+                      color: 'primary.contrastText',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1.5
+                    }}>
+                      <AcceptedIcon />
+                      <Typography variant="h6" fontWeight={600}>
+                        Accepted Doctors ({acceptedDoctors.length})
+                      </Typography>
+                    </Box>
+                    <Box sx={{ p: 3 }}>
+                      <Grid container spacing={2.5}>
+                        {renderDoctorList(acceptedDoctors)}
+                      </Grid>
+                    </Box>
+                  </CardContent>
+                </Card>
+              )}
+              
+              {tabValue === 1 && (
+                <Card elevation={3} sx={{ borderRadius: 3, overflow: 'hidden' }}>
+                  <CardContent sx={{ p: 0 }}>
+                    <Box sx={{ 
+                      p: 3, 
+                      backgroundColor: '#FDB159', // Changed from warning.main to Light Orange
+                      color: 'warning.contrastText',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1.5
+                    }}>
+                      <PendingIcon />
+                      <Typography variant="h6" fontWeight={600}>
+                        Pending Requests ({pendingDoctors.length})
+                      </Typography>
+                    </Box>
+                    <Box sx={{ p: 3 }}>
+                      <Grid container spacing={2.5}>
+                        {renderDoctorList(pendingDoctors, true)}
+                      </Grid>
+                    </Box>
+                  </CardContent>
+                </Card>
+              )}
+            </Box>
+          )}
+        </Box>
       </Container>
       
-      {/* Footer */}
+      {/* Footer with changed color */}
       <Box 
         component="footer" 
         sx={{ 
-          py: 2, 
-          bgcolor: 'background.paper', 
+          py: 1, 
+          bgcolor: '#0B8A67', // Changed from #0B8A67 to Steel Blue
           borderTop: '1px solid', 
           borderColor: 'divider',
           mt: 'auto'
         }}
       >
         <Container maxWidth="lg">
-          <Typography variant="body2" color="text.secondary" align="center">
-            &copy; 2025 HealthLink. All Rights Reserved.
-          </Typography>
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              height: '100%',
+              color: '#043B89',
+              textAlign: 'center'
+            }}
+          >
+            <Typography 
+              variant="subtitle1" 
+              color="white" 
+              fontWeight={600}
+            >
+              HealthLink
+            </Typography>
+            <Typography 
+              variant="body2" 
+              color="white"
+            >
+              &copy; 2025 HealthLink. All Rights Reserved.
+            </Typography>
+          </Box>
         </Container>
       </Box>
       
@@ -366,7 +554,7 @@ const PatientDashboard = () => {
           onClose={handleCloseAlert} 
           severity="error" 
           variant="filled"
-          sx={{ width: '100%' }}
+          sx={{ width: '100%', boxShadow: 3, borderRadius: 2, bgcolor: '#FF6B6B' }} // Changed color
         >
           {error}
         </Alert>
@@ -382,7 +570,7 @@ const PatientDashboard = () => {
           onClose={handleCloseAlert} 
           severity="success" 
           variant="filled"
-          sx={{ width: '100%' }}
+          sx={{ width: '100%', boxShadow: 3, borderRadius: 2, bgcolor: '#4CAF50' }} // Changed color
         >
           {success}
         </Alert>

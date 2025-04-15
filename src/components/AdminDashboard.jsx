@@ -22,7 +22,10 @@ import {
   ListItemAvatar,
   ListItemText,
   Avatar,
-  InputAdornment
+  InputAdornment,
+  useTheme,
+  alpha,
+  IconButton
 } from '@mui/material';
 import {
   Upload as UploadIcon,
@@ -33,10 +36,13 @@ import {
   Person as PersonIcon,
   Assignment as AssignmentIcon,
   Key as KeyIcon,
-  Business as BusinessIcon
+  Business as BusinessIcon,
+  CloudDownload as CloudDownloadIcon,
+  Close as CloseIcon
 } from '@mui/icons-material';
 
 const AdminDashboard = () => {
+  const theme = useTheme();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -59,6 +65,13 @@ const AdminDashboard = () => {
     const orgId = localStorage.getItem('mspId');
     setAdminOrg(orgId);
   }, []);
+
+  // colours
+  const orgColors = {
+    primary: adminOrg === 'Org1MSP' ? '#3C4A51' : '#3C4A51', // Header & primary buttons
+    secondary: adminOrg === 'Org1MSP' ? '#000' : '#000', // Footer & secondary elements
+    accent: adminOrg === 'Org1MSP' ? '#732121' : '#732121', // Accents & highlights
+  };
 
   const handleLogout = () => {
     // Clear all authentication data
@@ -175,323 +188,420 @@ const AdminDashboard = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <AppBar position="fixed" color="primary">
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: '#E1E2E4' }}>
+      <AppBar 
+        position="fixed" 
+        elevation={0} 
+        sx={{ 
+          bgcolor: orgColors.primary, 
+          borderBottom: `1px solid ${theme.palette.divider}` 
+        }}
+      >
         <Toolbar>
-          <AdminIcon sx={{ mr: 2 }} />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Admin Dashboard
-          </Typography>
-          <Button 
-            color="inherit" 
-            onClick={handleLogout}
-            startIcon={<LogoutIcon />}
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              color: orgColors.accent 
+            }}
           >
-            Logout
-          </Button>
+            <AdminIcon sx={{ mr: 1, fontSize: 28,color :'#fff' }} />
+            <Typography 
+              variant="h6" 
+              component="div" 
+              sx={{ 
+                fontWeight: 600, 
+                color: '#FFFFFF'
+              }}
+            >
+              HealthLink Admin
+            </Typography>
+          </Box>
+          
+          <Box sx={{ flexGrow: 1 }} />
+          
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center',
+            '& .MuiButton-root': {
+              borderRadius: '50px',
+              px: 3
+            }
+          }}>
+            <Chip 
+              icon={<BusinessIcon/>} 
+              label={adminOrg === 'Org1MSP' ? 'Doctor Organization' : 'Patient Organization'} 
+              sx={{ 
+                mr: 2, 
+                height: 40, 
+                px: 1,
+                color: 'white',
+                bgcolor: orgColors.accent,
+                '& .MuiChip-icon': {
+                  color: 'white',
+                },
+              }}
+            />
+            <Button 
+              variant="contained"
+              onClick={handleLogout}
+              startIcon={<LogoutIcon />}
+              sx={{ 
+                boxShadow: 'none',
+                fontWeight: 500,
+                bgcolor: alpha('#ffffff', 0.2),
+                '&:hover': {
+                  bgcolor: alpha('#ffffff', 0.3),
+                }
+              }}
+            >
+              Sign Out
+            </Button>
+          </Box>
         </Toolbar>
       </AppBar>
       
-      <Container maxWidth="xl" sx={{ mt: 10, mb: 4, flex: 1 }}>
-        <Grid container spacing={3}>
-          {/* Left column - Registration Form */}
-          <Grid item xs={12} md={7}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <PersonAddIcon sx={{ mr: 1, color: 'primary.main' }} />
-                  <Typography variant="h5" component="h2" style={{ fontFamily: 'Roboto, sans-serif', fontSize: '1.5rem' }}>
-                    Register New {adminOrg === 'Org1MSP' ? 'Doctor' : 'Patient'}
-                  </Typography>
-                </Box>
-                <Divider sx={{ mb: 3 }} />
+      <Container maxWidth="lg" sx={{ mt: 12, mb: 4, flex: 1 }}>
+        <Card 
+          elevation={0} 
+          sx={{ 
+            borderRadius: 3, 
+            overflow: 'hidden',
+            border: `1px solid ${alpha(orgColors.accent, 0.1)}`,
+          }}
+        >
+          <Box 
+            sx={{ 
+              py: 3, 
+              px: 4, 
+              bgcolor: orgColors.accent,
+              color: '#fff'
+            }}
+          >
+            <Typography 
+              variant="h5" 
+              component="h2" 
+              sx={{ 
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1
+              }}
+            >
+              <PersonAddIcon />
+              Register New {adminOrg === 'Org1MSP' ? 'Doctor' : 'Patient'}
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 1, opacity: 0.85 }}>
+              Complete the form below to add a new user to the {adminOrg === 'Org1MSP' ? 'Doctor' : 'Patient'} organization.
+            </Typography>
+          </Box>
+          
+          <CardContent sx={{ p: 4 }}>
+            {/* Organization Info */}
+            <Alert 
+              severity="info" 
+              variant="outlined"
+              icon={<SecurityIcon />}
+              sx={{ 
+                mb: 4, 
+                borderRadius: 2,
+                '& .MuiAlert-message': { py: 1 },
+                borderColor: orgColors.accent,
+                color: 'black',
+                '& .MuiAlert-icon': {
+                  color: orgColors.accent
+                }
+              }}
+            >
+              You are registered as an admin for <strong>{adminOrg === 'Org1MSP' ? 'Doctor Organization (Org1MSP)' : 'Patient Organization (Org2MSP)'}</strong>.
+              You can only add users to your organization.
+            </Alert>
+            
+            {error && (
+              <Alert 
+                severity="error" 
+                variant="filled"
+                sx={{ 
+                  mb: 4, 
+                  borderRadius: 2,
+                  '& .MuiAlert-message': { py: 1 }
+                }}
+              >
+                {error}
+              </Alert>
+            )}
+            
+            <Box component="form" onSubmit={handleSubmit}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Username"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                    variant="outlined"
+                    placeholder="Enter username"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <PersonIcon sx={{ color: orgColors.accent }} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        '&.Mui-focused fieldset': {
+                          borderWidth: 2,
+                          borderColor: orgColors.accent
+                        }
+                      },
+                      '& .MuiFormLabel-root.Mui-focused': {
+                        color: orgColors.accent
+                      }
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Password"
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    variant="outlined"
+                    placeholder="Enter strong password"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <KeyIcon sx={{ color: orgColors.accent }} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        '&.Mui-focused fieldset': {
+                          borderWidth: 2,
+                          borderColor: orgColors.accent
+                        }
+                      },
+                      '& .MuiFormLabel-root.Mui-focused': {
+                        color: orgColors.accent
+                      }
+                    }}
+                  />
+                </Grid>
                 
-                {/* Organization Info */}
-                <Alert severity="info" sx={{ mb: 3 }}>
-                  You are registered as an admin for {adminOrg === 'Org1MSP' ? 'Doctor Organization (Org1MSP)' : 'Patient Organization (Org2MSP)'}.
-                  You can only add users to your organization.
-                </Alert>
-                
-                {error && (
-                  <Alert severity="error" sx={{ mb: 3 }}>
-                    {error}
-                  </Alert>
-                )}
-                
-                <Box component="form" onSubmit={handleSubmit}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                      <TextField
-                        fullWidth
-                        label="Username"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleChange}
-                        required
-                        variant="outlined"
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <PersonIcon color="primary" />
-                            </InputAdornment>
-                          ),
-                        }}
+                {/* Only show file upload for patient organization admins */}
+                {adminOrg === 'Org2MSP' && (
+                  <Grid item xs={12}>
+                    <Paper
+                      variant="outlined"
+                      sx={{
+                        p: 4,
+                        textAlign: 'center',
+                        borderStyle: 'dashed',
+                        borderWidth: 2,
+                        borderColor: fileName ? orgColors.accent : theme.palette.divider,
+                        bgcolor: fileName ? alpha(orgColors.accent, 0.05) : 'transparent',
+                        borderRadius: 3,
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          borderColor: orgColors.accent,
+                          bgcolor: alpha(orgColors.accent, 0.05)
+                        }
+                      }}
+                    >
+                      <input
+                        accept=".json"
+                        id="file-upload"
+                        type="file"
+                        hidden
+                        onChange={handleFileChange}
                       />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <TextField
-                        fullWidth
-                        label="Password"
-                        name="password"
-                        type="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                        variant="outlined"
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <KeyIcon color="primary" />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    </Grid>
-                    
-                    {/* Only show file upload for patient organization admins */}
-                    {adminOrg === 'Org2MSP' && (
-                      <Grid item xs={12}>
-                        <Paper
-                          variant="outlined"
-                          sx={{
-                            p: 3,
-                            textAlign: 'center',
-                            borderStyle: 'dashed',
-                            borderColor: 'primary.light',
-                            bgcolor: 'background.paper',
-                            transition: 'all 0.3s ease',
-                            '&:hover': {
-                              borderColor: 'primary.main',
-                              bgcolor: 'rgba(52, 152, 219, 0.04)'
-                            }
-                          }}
-                        >
-                          <input
-                            accept=".json"
-                            id="file-upload"
-                            type="file"
-                            hidden
-                            onChange={handleFileChange}
-                          />
-                          <Typography variant="body1" color="text.secondary" gutterBottom>
-                            Upload Patient Health Record (JSON)
+                      
+                      {!fileName ? (
+                        <>
+                          <Box sx={{ mb: 2 }}>
+                            <UploadIcon sx={{ fontSize: 48, color: theme.palette.text.secondary }} />
+                          </Box>
+                          <Typography variant="h6" color="text.primary" gutterBottom>
+                            Upload Patient Health Record
                           </Typography>
+                          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                            Drag and drop a JSON file here, or click to browse
+                          </Typography>
+                          
                           <label htmlFor="file-upload">
                             <Button
-                              variant="outlined"
+                              variant="contained"
                               component="span"
                               startIcon={<UploadIcon />}
-                              sx={{ mb: 2 }}
+                              sx={{ 
+                                px: 4, 
+                                py: 1.5, 
+                                borderRadius: 50,
+                                boxShadow: 'none',
+                                bgcolor: orgColors.accent,
+                                '&:hover': {
+                                  bgcolor: alpha(orgColors.accent, 0.8)
+                                }
+                              }}
                             >
                               Browse Files
                             </Button>
                           </label>
                           
-                          {fileName ? (
-                            <Box sx={{ mt: 2 }}>
-                              <Chip 
-                                label={fileName}
-                                color="primary"
-                                onDelete={() => {
-                                  setFileName('');
-                                  setFormData({...formData, file: null});
-                                }}
-                                icon={<AssignmentIcon />}
-                              />
-                            </Box>
-                          ) : (
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                              JSON files only, max 10MB
-                            </Typography>
-                          )}
-                          
-                          <Button
-                            onClick={handleDownloadSamplePDF}
-                            variant="text"
-                            size="small"
+                          <Typography 
+                            variant="caption" 
+                            display="block" 
+                            color="text.secondary" 
                             sx={{ mt: 2 }}
                           >
-                            Download Sample PDF
-                          </Button>
-                        </Paper>
-                      </Grid>
-                    )}
-                    
-                    <Grid item xs={12}>
+                            JSON files only, max 10MB
+                          </Typography>
+                        </>
+                      ) : (
+                        <Box sx={{ 
+                          py: 1,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center'
+                        }}>
+                          <Box sx={{ 
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 80,
+                            height: 80,
+                            borderRadius: '50%',
+                            bgcolor: alpha(orgColors.accent, 0.1),
+                            mb: 2
+                          }}>
+                            <AssignmentIcon 
+                              sx={{ 
+                                fontSize: 36, 
+                                color: orgColors.accent 
+                              }} 
+                            />
+                          </Box>
+                          
+                          <Typography variant="h6" gutterBottom>
+                            File Selected
+                          </Typography>
+                          
+                          <Chip 
+                            label={fileName}
+                            sx={{ 
+                              px: 1,
+                              mt: 1,
+                              mb: 2,
+                              borderRadius: 3,
+                              bgcolor: orgColors.accent,
+                              color: 'white',
+                              '& .MuiChip-deleteIcon': {
+                                color: 'white',
+                                opacity: 0.8,
+                                '&:hover': {
+                                  opacity: 1
+                                }
+                              }
+                            }}
+                            onDelete={() => {
+                              setFileName('');
+                              setFormData({...formData, file: null});
+                            }}
+                          />
+                          
+                          <label htmlFor="file-upload">
+                            <Button
+                              variant="outlined"
+                              component="span"
+                              size="small"
+                              sx={{ 
+                                borderRadius: 50, 
+                                borderColor: orgColors.accent, 
+                                color: orgColors.accent,
+                                '&:hover': {
+                                  borderColor: orgColors.accent,
+                                  bgcolor: alpha(orgColors.accent, 0.05)
+                                }
+                              }}
+                            >
+                              Change File
+                            </Button>
+                          </label>
+                        </Box>
+                      )}
+                      
                       <Button
-                        type="submit"
-                        variant="contained"
-                        size="large"
-                        fullWidth
-                        disabled={loading}
-                        sx={{ py: 1.5 }}
-                      >
-                        {loading ? (
-                          <CircularProgress size={24} />
-                        ) : (
-                          `Register ${adminOrg === 'Org1MSP' ? 'Doctor' : 'Patient'}`
-                        )}
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-          
-          {/* Right column - Recently Registered Users */}
-          <Grid item xs={12} md={5}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <SecurityIcon sx={{ mr: 1, color: 'primary.main' }} />
-                  <Typography variant="h5" component="h2">
-                    Recently Registered Users
-                  </Typography>
-                </Box>
-                <Divider sx={{ mb: 3 }} />
-                
-                {registeredUsers.length === 0 ? (
-                  <Box sx={{ textAlign: 'center', py: 4 }}>
-                    <Typography variant="body1" color="text.secondary">
-                      No users registered yet
-                    </Typography>
-                  </Box>
-                ) : (
-                  <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                    {registeredUsers.slice(-5).reverse().map((user) => (
-                      <ListItem
-                        key={user.id}
-                        alignItems="flex-start"
-                        divider
-                        sx={{
-                          transition: 'all 0.2s',
-                          '&:hover': {
-                            bgcolor: 'rgba(52, 152, 219, 0.08)',
-                          },
+                        onClick={handleDownloadSamplePDF}
+                        variant="text"
+                        size="small"
+                        startIcon={<CloudDownloadIcon />}
+                        sx={{ 
+                          mt: 2,
+                          color: orgColors.accent,
                         }}
                       >
-                        <ListItemAvatar>
-                          <Avatar sx={{ bgcolor: user.mspId === 'Org1MSP' ? '#3498DB' : '#2ECC71' }}>
-                            {user.username.charAt(0).toUpperCase()}
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary={
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                              <Typography
-                                variant="subtitle1"
-                                component="span"
-                                sx={{ fontWeight: 500 }}
-                              >
-                                {user.username}
-                              </Typography>
-                              <Chip
-                                label={user.mspId === 'Org1MSP' ? 'Doctor' : 'Patient'}
-                                size="small"
-                                color={user.mspId === 'Org1MSP' ? 'secondary' : 'success'}
-                                sx={{ ml: 1, fontSize: '0.75rem' }}
-                              />
-                            </Box>
-                          }
-                          secondary={
-                            <React.Fragment>
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                                component="span"
-                                style={{ fontSize: '1rem' }}
-                              >
-                                Registered: {new Date(user.createdAt).toLocaleString()}
-                              </Typography>
-                              {user.fileAttached && (
-                                <Chip
-                                  label="PDF Attached"
-                                  size="small"
-                                  icon={<AssignmentIcon />}
-                                  variant="outlined"
-                                  sx={{ ml: 1, fontSize: '0.7rem' }}
-                                />
-                              )}
-                            </React.Fragment>
-                          }
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
+                        Download Sample PDF
+                      </Button>
+                    </Paper>
+                  </Grid>
                 )}
-              </CardContent>
-            </Card>
-            
-            {/* System Statistics Card */}
-            <Card sx={{ mt: 3 }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  System Statistics
-                </Typography>
-                <Divider sx={{ mb: 2 }} />
                 
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'rgba(52, 152, 219, 0.1)' }}>
-                      <Typography variant="h4" color="secondary.main" fontWeight="bold">
-                        {registeredUsers.filter(u => u.mspId === 'Org1MSP').length}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Doctors
-                      </Typography>
-                    </Paper>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'rgba(46, 204, 113, 0.1)' }}>
-                      <Typography variant="h4" color="success.main" fontWeight="bold">
-                        {registeredUsers.filter(u => u.mspId === 'Org2MSP').length}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Patients
-                      </Typography>
-                    </Paper>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'rgba(44, 62, 80, 0.1)' }}>
-                      <Typography variant="h4" color="primary.main" fontWeight="bold">
-                        {registeredUsers.length}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Total Users
-                      </Typography>
-                    </Paper>
-                  </Grid>
+                <Grid item xs={12}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    fullWidth
+                    disabled={loading}
+                    sx={{ 
+                      py: 1.8, 
+                      mt: 2,
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      textTransform: 'none',
+                      fontSize: '1rem',
+                      bgcolor: orgColors.accent,
+                      boxShadow: `0 8px 16px ${alpha(orgColors.accent, 0.2)}`,
+                      '&:hover': {
+                        bgcolor: alpha(orgColors.accent, 0.8)
+                      }
+                    }}
+                  >
+                    {loading ? (
+                      <CircularProgress size={24} color="inherit" />
+                    ) : (
+                      `Register ${adminOrg === 'Org1MSP' ? 'Doctor' : 'Patient'}`
+                    )}
+                  </Button>
                 </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+              </Grid>
+            </Box>
+          </CardContent>
+        </Card>
       </Container>
       
       {/* Footer */}
       <Box 
         component="footer" 
         sx={{ 
-          py: 2, 
-          bgcolor: 'background.paper', 
+          py: 3, 
+          bgcolor: orgColors.secondary, 
           borderTop: '1px solid', 
-          borderColor: 'divider',
+          borderColor: theme.palette.divider,
           mt: 'auto'
         }}
       >
         <Container maxWidth="lg">
-          <Typography variant="body2" color="text.secondary" align="center">
+          <Typography variant="body2" color="white" align="center">
             &copy; 2025 HealthLink. All Rights Reserved.
           </Typography>
         </Container>
@@ -502,13 +612,27 @@ const AdminDashboard = () => {
         open={!!success} 
         autoHideDuration={6000} 
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert
           onClose={handleCloseSnackbar}
           severity="success"
           variant="filled"
-          sx={{ width: '100%' }}
+          sx={{ 
+            width: '100%',
+            borderRadius: 2,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+          }}
+          action={
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={handleCloseSnackbar}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          }
         >
           {success}
         </Alert>
@@ -519,13 +643,27 @@ const AdminDashboard = () => {
         open={!!error && !error.includes('Please fill')} 
         autoHideDuration={6000} 
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
         <Alert
           onClose={handleCloseSnackbar}
           severity="error"
           variant="filled"
-          sx={{ width: '100%' }}
+          sx={{ 
+            width: '100%',
+            borderRadius: 2,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+          }}
+          action={
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={handleCloseSnackbar}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          }
         >
           {error}
         </Alert>

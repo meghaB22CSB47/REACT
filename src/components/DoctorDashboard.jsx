@@ -23,7 +23,9 @@ import {
   CircularProgress,
   Alert,
   Snackbar,
-  InputAdornment
+  InputAdornment,
+  useTheme,
+  alpha
 } from '@mui/material';
 import {
   Logout as LogoutIcon,
@@ -33,11 +35,13 @@ import {
   Edit as EditIcon,
   LocalHospital as DoctorIcon,
   Person as PatientIcon,
-  Close as CloseIcon
+  Close as CloseIcon,
+  Dashboard as DashboardIcon
 } from '@mui/icons-material';
 import { logout } from '../utils/auth';
 
 const DoctorDashboard = () => {
+  const theme = useTheme();
   const [patients, setPatients] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -184,32 +188,97 @@ const DoctorDashboard = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <AppBar position="fixed" color="primary">
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      minHeight: '100vh',
+      backgroundColor: alpha(theme.palette.primary.light, 0.05)
+    }}>
+      <AppBar 
+        position="fixed" 
+        color="primary" 
+        elevation={0}
+        sx={{ 
+          borderBottom: `1px solid ${alpha(theme.palette.common.white, 0.2)}`,
+          backdropFilter: 'blur(8px)',
+          backgroundColor: '#092039'
+        }}
+      >
         <Toolbar>
-          <DoctorIcon sx={{ mr: 2 }} />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Doctor Dashboard
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <DoctorIcon sx={{ fontSize: 28, mr: 1 }} />
+            <Typography variant="h5" component="div" fontWeight="600">
+              HealthLink
+            </Typography>
+          </Box>
+          
+          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+            <Typography 
+              variant="h6" 
+              component="div" 
+              sx={{ 
+                fontWeight: 500,
+                display: { xs: 'none', md: 'block' } 
+              }}
+            >
+              Doctor Dashboard
+            </Typography>
+          </Box>
+          
           <Button 
             color="inherit" 
             onClick={handleLogout}
             startIcon={<LogoutIcon />}
+            sx={{ 
+              borderRadius: 2,
+              px: 2,
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.common.white, 0.15)
+              }
+            }}
           >
             Logout
           </Button>
         </Toolbar>
       </AppBar>
       
-      <Container maxWidth="lg" sx={{ mt: 10, mb: 4, flex: 1 }}>
-        <Grid container spacing={3}>
+      <Container maxWidth="lg" sx={{ mt: 12, mb: 6, flex: 1 }}>
+        <Box sx={{ mb: 4 }}>
+            <Typography variant="h4" fontWeight="600" gutterBottom align="center" >
+              Welcome, Doctor
+            </Typography>
+            <Typography 
+              variant="body1" align="center"
+              sx={{ color: 'black' }}
+            >
+              Manage your patients and electronic health records from this dashboard.
+            </Typography>
+        </Box>
+        
+        <Grid container spacing={4}>
           {/* Add Patient Request */}
           <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
+            <Card 
+              elevation={0}
+              sx={{ 
+                borderRadius: 3, 
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                overflow: 'hidden'
+              }}
+            >
+              <Box 
+                sx={{ 
+                  bgcolor: 'primary.main', 
+                  color: 'primary.contrastText',
+                  py: 1.5,
+                  px: 3
+                }}
+              >
+                <Typography variant="h6" fontWeight="500">
                   Add Patient Request
                 </Typography>
+              </Box>
+              <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <TextField 
                     fullWidth
@@ -222,9 +291,14 @@ const DoctorDashboard = () => {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <PatientIcon />
+                          <PatientIcon color="primary" />
                         </InputAdornment>
                       ),
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2
+                      }
                     }}
                   />
                   <Button
@@ -232,8 +306,19 @@ const DoctorDashboard = () => {
                     color="primary"
                     onClick={handleAddRequest}
                     disabled={updating || !patientId.trim()}
-                    startIcon={updating ? <CircularProgress size={20} /> : <AddIcon />}
-                    sx={{ px: 3, py: 1.5, whiteSpace: 'nowrap' }}
+                    startIcon={updating ? <CircularProgress size={20} color="inherit" /> : <AddIcon />}
+                    sx={{ 
+                      px: 3, 
+                      py: 1.5, 
+                      whiteSpace: 'nowrap',
+                      borderRadius: 2,
+                      boxShadow: 2,
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: 4
+                      }
+                    }}
                   >
                     Add Request
                   </Button>
@@ -244,39 +329,87 @@ const DoctorDashboard = () => {
           
           {/* Patient List */}
           <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                  <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                    Patient Records
-                  </Typography>
-                  <TextField
-                    placeholder="Search patients..."
-                    variant="outlined"
-                    size="small"
-                    value={searchTerm}
-                    onChange={handleSearch}
-                    sx={{ width: 250 }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Box>
-                
-                <Divider sx={{ mb: 2 }} />
-                
+            <Card 
+              elevation={0}
+              sx={{ 
+                borderRadius: 3, 
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                overflow: 'hidden'
+              }}
+            >
+              <Box 
+                sx={{ 
+                  bgcolor: 'primary.main', 
+                  color: 'primary.contrastText',
+                  py: 1.5,
+                  px: 3,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between'
+                }}
+              >
+                <Typography variant="h6" fontWeight="500">
+                  Patient Records
+                </Typography>
+                <TextField
+                  placeholder="Search patients..."
+                  variant="outlined"
+                  size="small"
+                  value={searchTerm}
+                  onChange={handleSearch}
+                  sx={{ 
+                    width: 250, 
+                    bgcolor: alpha(theme.palette.common.white, 0.1),
+                    borderRadius: 2,
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      '& fieldset': {
+                        borderColor: 'transparent'
+                      },
+                      '&:hover fieldset': {
+                        borderColor: 'transparent'
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: alpha(theme.palette.common.white, 0.3)
+                      }
+                    },
+                    '& .MuiInputBase-input': {
+                      color: theme.palette.common.white
+                    },
+                    '& .MuiInputAdornment-root .MuiSvgIcon-root': {
+                      color: theme.palette.common.white
+                    }
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+              
+              <CardContent sx={{ p: 3 }}>
                 {loading ? (
-                  <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
-                    <CircularProgress />
+                  <Box sx={{ display: 'flex', justifyContent: 'center', p: 5 }}>
+                    <CircularProgress color="primary" />
                   </Box>
                 ) : filteredPatients.length === 0 ? (
-                  <Paper sx={{ p: 3, textAlign: 'center', bgcolor: 'background.default' }}>
-                    <Typography variant="body1" color="text.secondary">
-                      No patients found. Add a patient request to get started.
+                  <Paper 
+                    sx={{ 
+                      p: 5, 
+                      textAlign: 'center', 
+                      bgcolor: alpha(theme.palette.primary.light, 0.05),
+                      border: `1px dashed ${alpha(theme.palette.primary.main, 0.3)}`,
+                      borderRadius: 3
+                    }}
+                  >
+                    <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+                      No patients found
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Add a patient request to get started
                     </Typography>
                   </Paper>
                 ) : (
@@ -284,56 +417,92 @@ const DoctorDashboard = () => {
                     {filteredPatients.map((patient) => (
                       <Grid item xs={12} key={patient.pid}>
                         <Paper 
-                          elevation={2}
+                          elevation={0}
                           sx={{ 
-                            p: 2,
+                            p: 3,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            borderRadius: 2,
-                            transition: 'all 0.3s ease',
+                            borderRadius: 3,
+                            border: `1px solid ${alpha(theme.palette.divider, 0.7)}`,
+                            transition: 'all 0.25s ease',
                             '&:hover': {
-                              boxShadow: 3,
-                              transform: 'translateY(-2px)',
+                              boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
+                              transform: 'translateY(-3px)',
+                              borderColor: 'transparent'
                             }
                           }}
                         >
                           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>
-                              <PatientIcon />
+                            <Avatar 
+                              sx={{ 
+                                bgcolor: alpha(theme.palette.primary.main, 0.1), 
+                                color: theme.palette.primary.main,
+                                width: 50, 
+                                height: 50,
+                                mr: 2
+                              }}
+                            >
+                              <PatientIcon fontSize="large" />
                             </Avatar>
                             <Box>
-                              <Typography variant="subtitle1" fontWeight={500}>
-                                Patient ID: {patient.pid}
+                              <Typography variant="h6" fontWeight={500}>
+                                Patient {patient.pid}
                               </Typography>
-                              <Chip 
-                                size="small" 
-                                label="Active" 
-                                color="success" 
-                                variant="outlined"
-                                sx={{ mt: 0.5 }}
-                              />
+                              <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
+                                <Chip 
+                                  size="small" 
+                                  label="Active" 
+                                  color="success" 
+                                  sx={{ 
+                                    borderRadius: 1,
+                                    fontWeight: 500
+                                  }}
+                                />
+                                <Typography 
+                                  variant="body2" 
+                                  color="text.secondary"
+                                  sx={{ ml: 2 }}
+                                >
+                                  ID: {patient.pid}
+                                </Typography>
+                              </Box>
                             </Box>
                           </Box>
                           
-                          <Box sx={{ display: 'flex', gap: 1 }}>
+                          <Box sx={{ display: 'flex', gap: 2 }}>
                             <Button
                               variant="outlined"
                               color="primary"
-                              size="small"
+                              size="medium"
                               startIcon={<VisibilityIcon />}
                               onClick={() => handleViewEHR(patient)}
+                              sx={{ 
+                                borderRadius: 2,
+                                px: 2,
+                                '&:hover': {
+                                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                                }
+                              }}
                             >
                               View EHR
                             </Button>
                             <Button
                               variant="contained"
                               color="primary"
-                              size="small"
+                              size="medium"
                               startIcon={<EditIcon />}
                               onClick={() => handleOpenUpdateDialog(patient)}
+                              sx={{ 
+                                borderRadius: 2,
+                                px: 2,
+                                boxShadow: 2,
+                                '&:hover': {
+                                  boxShadow: 4
+                                }
+                              }}
                             >
-                              Update
+                              Update EHR
                             </Button>
                           </Box>
                         </Paper>
@@ -353,36 +522,61 @@ const DoctorDashboard = () => {
         onClose={handleCloseDialog}
         fullWidth
         maxWidth="md"
+        PaperProps={{
+          elevation: 24,
+          sx: {
+            borderRadius: 3,
+            overflow: 'hidden'
+          }
+        }}
       >
-        <DialogTitle>
+        <DialogTitle sx={{ px: 3, py: 2, bgcolor: 'primary.main', color: 'primary.contrastText' }}>
           <Box display="flex" alignItems="center" justifyContent="space-between">
-            <Typography variant="h6">
+            <Typography variant="h6" fontWeight={500}>
               Update EHR for Patient {currentPatient?.pid}
             </Typography>
-            <IconButton onClick={handleCloseDialog} size="small">
+            <IconButton 
+              onClick={handleCloseDialog} 
+              size="small"
+              sx={{ color: 'common.white' }}
+            >
               <CloseIcon />
             </IconButton>
           </Box>
         </DialogTitle>
-        <Divider />
-        <DialogContent>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
-            Enter additional information to append to the patient's electronic health record:
-          </Typography>
-          <TextField
-            autoFocus
-            multiline
-            rows={8}
-            fullWidth
-            variant="outlined"
-            value={ehrText}
-            onChange={(e) => setEhrText(e.target.value)}
-            placeholder="Enter notes, diagnosis, treatment plans, or other relevant medical information..."
-            sx={{ mt: 2 }}
-          />
+        <DialogContent sx={{ p: 0 }}>
+          <Box sx={{ p: 3 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Enter additional information to append to the patient's electronic health record:
+            </Typography>
+            <TextField
+              autoFocus
+              multiline
+              rows={10}
+              fullWidth
+              variant="outlined"
+              value={ehrText}
+              onChange={(e) => setEhrText(e.target.value)}
+              placeholder="Enter notes, diagnosis, treatment plans, or other relevant medical information..."
+              sx={{ 
+                mt: 1,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2
+                }
+              }}
+            />
+          </Box>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 3 }}>
-          <Button onClick={handleCloseDialog} color="inherit">
+        <DialogActions sx={{ px: 3, py: 3, borderTop: `1px solid ${theme.palette.divider}` }}>
+          <Button 
+            onClick={handleCloseDialog} 
+            color="inherit"
+            variant="outlined"
+            sx={{ 
+              borderRadius: 2,
+              px: 3
+            }}
+          >
             Cancel
           </Button>
           <Button 
@@ -390,7 +584,15 @@ const DoctorDashboard = () => {
             variant="contained" 
             color="primary"
             disabled={updating || !ehrText.trim()}
-            startIcon={updating ? <CircularProgress size={20} /> : <EditIcon />}
+            startIcon={updating ? <CircularProgress size={20} color="inherit" /> : <EditIcon />}
+            sx={{ 
+              borderRadius: 2,
+              px: 3,
+              boxShadow: 2,
+              '&:hover': {
+                boxShadow: 4
+              }
+            }}
           >
             Update EHR
           </Button>
@@ -401,15 +603,21 @@ const DoctorDashboard = () => {
       <Box 
         component="footer" 
         sx={{ 
-          py: 2, 
-          bgcolor: 'background.paper', 
+          py: 3, 
+          bgcolor: '#043B89', 
           borderTop: '1px solid', 
           borderColor: 'divider',
           mt: 'auto'
         }}
       >
         <Container maxWidth="lg">
-          <Typography variant="body2" color="text.secondary" align="center">
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <DoctorIcon color="primary" sx={{ mr: 1, fontSize: 20 }} />
+            <Typography variant="body2" color="white" fontWeight={500}>
+              HealthLink
+            </Typography>
+          </Box>
+          <Typography variant="body2" color="white" align="center" sx={{ mt: 1 }}>
             &copy; 2025 HealthLink. All Rights Reserved.
           </Typography>
         </Container>
@@ -426,7 +634,11 @@ const DoctorDashboard = () => {
           onClose={handleCloseAlert} 
           severity="error" 
           variant="filled"
-          sx={{ width: '100%' }}
+          sx={{ 
+            width: '100%',
+            borderRadius: 2,
+            boxShadow: 4
+          }}
         >
           {error}
         </Alert>
@@ -442,7 +654,11 @@ const DoctorDashboard = () => {
           onClose={handleCloseAlert} 
           severity="success" 
           variant="filled"
-          sx={{ width: '100%' }}
+          sx={{ 
+            width: '100%',
+            borderRadius: 2,
+            boxShadow: 4
+          }}
         >
           {success}
         </Alert>
@@ -452,3 +668,4 @@ const DoctorDashboard = () => {
 };
 
 export default DoctorDashboard;
+
