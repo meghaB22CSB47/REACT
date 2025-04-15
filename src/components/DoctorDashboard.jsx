@@ -25,7 +25,9 @@ import {
   Snackbar,
   InputAdornment,
   useTheme,
-  alpha
+  alpha,
+  Tabs,
+  Tab
 } from '@mui/material';
 import {
   Logout as LogoutIcon,
@@ -37,7 +39,9 @@ import {
   Person as PatientIcon,
   Close as CloseIcon,
   Dashboard as DashboardIcon,
-  AccountCircle as AccountCircleIcon
+  AccountCircle as AccountCircleIcon,
+  CheckCircle as AcceptedIcon,
+  Pending as PendingIcon
 } from '@mui/icons-material';
 import { logout } from '../utils/auth';
 
@@ -45,6 +49,8 @@ const DoctorDashboard = () => {
   const theme = useTheme();
   const [username, setUsername] = useState('');
   const [patients, setPatients] = useState([]);
+  const [acceptedPatients, setAcceptedPatients] = useState([]);
+  const [pendingPatients, setPendingPatients] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
@@ -55,11 +61,13 @@ const DoctorDashboard = () => {
   const [currentPatient, setCurrentPatient] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [ehrText, setEhrText] = useState('');
+  const [tabValue, setTabValue] = useState(0);
   const navigate = useNavigate();
 
   // Fetch patients on component mount and get username
   useEffect(() => {
     fetchPatients();
+    fetchPatientRequests();
     // Get username from localStorage
     const storedUsername = localStorage.getItem('username');
     if (storedUsername) {
@@ -67,16 +75,22 @@ const DoctorDashboard = () => {
     }
   }, []);
 
-  // Filter patients based on search term
+  // Filter patients based on search term and current tab
   useEffect(() => {
-    if (patients.length > 0) {
+    if (tabValue === 0) {
       setFilteredPatients(
-        patients.filter(patient => 
+        acceptedPatients.filter(patient => 
+          patient.pid.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredPatients(
+        pendingPatients.filter(patient => 
           patient.pid.toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
     }
-  }, [searchTerm, patients]);
+  }, [searchTerm, tabValue, acceptedPatients, pendingPatients]);
 
   const fetchPatients = async () => {
     setLoading(true);
@@ -92,10 +106,43 @@ const DoctorDashboard = () => {
       if (!response.ok) throw new Error('Failed to fetch patients');
       const data = await response.json();
       setPatients(data);
-      setFilteredPatients(data);
     } catch (error) {
       console.error('Error:', error);
       setError('Failed to load patient data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPatientRequests = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:8080/fabric/doctor/requests', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+        }
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch patient requests');
+      const data = await response.json();
+      
+      // Filter patients based on status
+      const accepted = data.filter(request => request.status === 'Accepted')
+        .map(request => ({ pid: request.pid, requestId: request.requestId }));
+      
+      const pending = data.filter(request => request.status === 'Requested')
+        .map(request => ({ pid: request.pid, requestId: request.requestId }));
+      
+      setAcceptedPatients(accepted);
+      setPendingPatients(pending);
+      
+      // Set filtered patients based on current tab
+      setFilteredPatients(tabValue === 0 ? accepted : pending);
+    } catch (error) {
+      console.error('Error:', error);
+      setError('Failed to load patient requests. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -137,7 +184,7 @@ const DoctorDashboard = () => {
       if (!response.ok) throw new Error('Failed to add request');
       setSuccess(`Request for patient ${patientId} added successfully!`);
       setPatientId('');
-      fetchPatients();
+      fetchPatientRequests();
     } catch (error) {
       console.error('Error:', error);
       setError(`Failed to add request for patient ${patientId}`);
@@ -192,6 +239,147 @@ const DoctorDashboard = () => {
   const handleCloseAlert = () => {
     setError('');
     setSuccess('');
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
+  const renderPatientList = (patients, isPending = false) => {
+    if (patients.length === 0) {
+      return (
+        <Grid item xs={12}> {/* Wrap in Grid item for proper alignment */}
+          <Paper 
+            sx={{ 
+              p: 5, 
+              textAlign: 'center', 
+              bgcolor: alpha(theme.palette.primary.light, 0.05),
+              border: `1px dashed ${alpha(theme.palette.primary.main, 0.3)}`,
+              borderRadius: 3,
+              width: '100%' /* Ensure full width */
+            }}
+          >
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+              No {isPending ? 'pending' : 'accepted'} patients found
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {isPending ? 'Wait for patient approval or add new requests' : 'Add a patient request to get started'}
+            </Typography>
+          </Paper>
+        </Grid>
+      );
+    }
+  
+
+    return patients.map((patient) => (
+      <Grid item xs={12} key={patient.pid}>
+        <Paper 
+          elevation={0}
+          sx={{ 
+            p: 3,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderRadius: 3,
+            border: `1px solid ${alpha(theme.palette.divider, 0.7)}`,
+            transition: 'all 0.25s ease',
+            '&:hover': {
+              boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
+              transform: 'translateY(-3px)',
+              borderColor: 'transparent'
+            }
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Avatar 
+              sx={{ 
+                bgcolor: isPending 
+                  ? alpha(theme.palette.warning.main, 0.1)
+                  : alpha(theme.palette.info.main, 0.1), 
+                color: isPending 
+                  ? theme.palette.warning.main
+                  : theme.palette.info.main,
+                width: 50, 
+                height: 50,
+                mr: 2
+              }}
+            >
+              <PatientIcon fontSize="large" />
+            </Avatar>
+            <Box>
+              <Typography variant="h6" fontWeight={500}>
+                Patient {patient.pid}
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
+                <Chip 
+                  size="small" 
+                  label={isPending ? "Pending" : "Active"} 
+                  color={isPending ? "warning" : "success"} 
+                  sx={{ 
+                    borderRadius: 1,
+                    fontWeight: 500
+                  }}
+                />
+                <Typography 
+                  variant="body2" 
+                  color="text.secondary"
+                  sx={{ ml: 2 }}
+                >
+                  ID: {patient.pid}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+          
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            {!isPending && (
+              <Button
+                variant="outlined"
+                color="primary"
+                size="medium"
+                startIcon={<VisibilityIcon />}
+                onClick={() => handleViewEHR(patient)}
+                sx={{ 
+                  borderRadius: 2,
+                  px: 2,
+                  '&:hover': {
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                  }
+                }}
+              >
+                View EHR
+              </Button>
+            )}
+            {/* {!isPending && (
+              <Button
+                variant="contained"
+                color="primary"
+                size="medium"
+                startIcon={<EditIcon />}
+                onClick={() => handleOpenUpdateDialog(patient)}
+                sx={{ 
+                  borderRadius: 2,
+                  px: 2,
+                  boxShadow: 2,
+                  '&:hover': {
+                    boxShadow: 4
+                  }
+                }}
+              >
+                Update EHR
+              </Button>
+            )} */}
+            {isPending && (
+              <Chip 
+                label="Awaiting Approval" 
+                color="warning" 
+                sx={{ fontWeight: 500 }}
+              />
+            )}
+          </Box>
+        </Paper>
+      </Grid>
+    ));
   };
 
   return (
@@ -350,7 +538,7 @@ const DoctorDashboard = () => {
             </Card>
           </Grid>
           
-          {/* Patient List */}
+          {/* Patient List Tabs */}
           <Grid item xs={12}>
             <Card 
               elevation={0}
@@ -413,125 +601,88 @@ const DoctorDashboard = () => {
                 />
               </Box>
               
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <Tabs 
+                  value={tabValue} 
+                  onChange={handleTabChange}
+                  variant="fullWidth"
+                  sx={{
+                    '& .MuiTab-root': {
+                      py: 2,
+                      fontWeight: 500
+                    }
+                  }}
+                >
+                  <Tab 
+                    icon={<AcceptedIcon />} 
+                    iconPosition="start" 
+                    label={`Accepted (${acceptedPatients.length})`} 
+                  />
+                  <Tab 
+                    icon={<PendingIcon />} 
+                    iconPosition="start" 
+                    label={`Pending (${pendingPatients.length})`} 
+                  />
+                </Tabs>
+              </Box>
+              
               <CardContent sx={{ p: 3 }}>
                 {loading ? (
                   <Box sx={{ display: 'flex', justifyContent: 'center', p: 5 }}>
                     <CircularProgress color="primary" />
                   </Box>
-                ) : filteredPatients.length === 0 ? (
-                  <Paper 
-                    sx={{ 
-                      p: 5, 
-                      textAlign: 'center', 
-                      bgcolor: alpha(theme.palette.primary.light, 0.05),
-                      border: `1px dashed ${alpha(theme.palette.primary.main, 0.3)}`,
-                      borderRadius: 3
-                    }}
-                  >
-                    <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-                      No patients found
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Add a patient request to get started
-                    </Typography>
-                  </Paper>
                 ) : (
-                  <Grid container spacing={2}>
-                    {filteredPatients.map((patient) => (
-                      <Grid item xs={12} key={patient.pid}>
-                        <Paper 
-                          elevation={0}
-                          sx={{ 
-                            p: 3,
+                  <Box sx={{ mt: 1 }}>
+                    {tabValue === 0 && (
+                      <Card elevation={0} sx={{ borderRadius: 3, overflow: 'hidden' }}>
+                        <CardContent sx={{ p: 0 }}>
+                          <Box sx={{ 
+                            p: 3, 
+                            background: 'linear-gradient(90deg, #043B89 0%, #0A4DAA 100%)', // Add primary color gradient
+                            color: 'primary.contrastText',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'space-between',
-                            borderRadius: 3,
-                            border: `1px solid ${alpha(theme.palette.divider, 0.7)}`,
-                            transition: 'all 0.25s ease',
-                            '&:hover': {
-                              boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
-                              transform: 'translateY(-3px)',
-                              borderColor: 'transparent'
-                            }
-                          }}
-                        >
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Avatar 
-                              sx={{ 
-                                bgcolor: alpha(theme.palette.primary.main, 0.1), 
-                                color: theme.palette.primary.main,
-                                width: 50, 
-                                height: 50,
-                                mr: 2
-                              }}
-                            >
-                              <PatientIcon fontSize="large" />
-                            </Avatar>
-                            <Box>
-                              <Typography variant="h6" fontWeight={500}>
-                                Patient {patient.pid}
-                              </Typography>
-                              <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-                                <Chip 
-                                  size="small" 
-                                  label="Active" 
-                                  color="success" 
-                                  sx={{ 
-                                    borderRadius: 1,
-                                    fontWeight: 500
-                                  }}
-                                />
-                                <Typography 
-                                  variant="body2" 
-                                  color="text.secondary"
-                                  sx={{ ml: 2 }}
-                                >
-                                  ID: {patient.pid}
-                                </Typography>
-                              </Box>
-                            </Box>
+                            gap: 1.5
+                          }}>
+                            <AcceptedIcon />
+                            <Typography variant="h6" fontWeight={600}>
+                              Accepted Patients ({acceptedPatients.length})
+                            </Typography>
                           </Box>
-                          
-                          <Box sx={{ display: 'flex', gap: 2 }}>
-                            <Button
-                              variant="outlined"
-                              color="primary"
-                              size="medium"
-                              startIcon={<VisibilityIcon />}
-                              onClick={() => handleViewEHR(patient)}
-                              sx={{ 
-                                borderRadius: 2,
-                                px: 2,
-                                '&:hover': {
-                                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                                }
-                              }}
-                            >
-                              View EHR
-                            </Button>
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              size="medium"
-                              startIcon={<EditIcon />}
-                              onClick={() => handleOpenUpdateDialog(patient)}
-                              sx={{ 
-                                borderRadius: 2,
-                                px: 2,
-                                boxShadow: 2,
-                                '&:hover': {
-                                  boxShadow: 4
-                                }
-                              }}
-                            >
-                              Update EHR
-                            </Button>
+                          <Box sx={{ p: 3 }}>
+                            <Grid container spacing={2.5}>
+                              {renderPatientList(filteredPatients)}
+                            </Grid>
                           </Box>
-                        </Paper>
-                      </Grid>
-                    ))}
-                  </Grid>
+                        </CardContent>
+                      </Card>
+                    )}
+                    
+                    {tabValue === 1 && (
+                      <Card elevation={0} sx={{ borderRadius: 3, overflow: 'hidden' }}>
+                        <CardContent sx={{ p: 0 }}>
+                          <Box sx={{ 
+                            p: 3, 
+                            background: 'linear-gradient(90deg, #FDB159 0%, #FFD9A0 100%)',
+                            color: 'warning.contrastText',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1.5
+                          }}>
+                            <PendingIcon />
+                            <Typography variant="h6" fontWeight={600}>
+                              Pending Requests ({pendingPatients.length})
+                            </Typography>
+                          </Box>
+                          <Box sx={{ p: 3 }}>
+                            <Grid container spacing={2.5}>
+                              {renderPatientList(filteredPatients, true)}
+                            </Grid>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </Box>
                 )}
               </CardContent>
             </Card>

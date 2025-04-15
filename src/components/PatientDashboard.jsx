@@ -35,7 +35,8 @@ import {
   AccessTime as PendingIcon,
   CheckCircleOutline as AcceptedIcon,
   Dashboard as DashboardIcon,
-  AccountCircle as AccountCircleIcon
+  AccountCircle as AccountCircleIcon,
+  Description as DescriptionIcon
 } from '@mui/icons-material';
 import { logout } from '../utils/auth';
 
@@ -49,6 +50,7 @@ const PatientDashboard = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [username, setUsername] = useState('');
+  const [ehrLoading, setEhrLoading] = useState(false);
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -163,6 +165,33 @@ const PatientDashboard = () => {
   const viewHistory = (doctorId) => {
     navigate(`/history/${doctorId}`);
   };
+// {this is the function}
+  const viewEHR = async () => {
+    try {
+      setEhrLoading(true);
+      const response = await fetch('http://localhost:8080/fabric/patient/view-ehr', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+        }
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch EHR data");
+      
+      // Handle the EHR data as needed
+      const ehrData = await response.json();
+      console.log("EHR Data:", ehrData);
+      
+      localStorage.setItem('ehrData', JSON.stringify(ehrData));
+      navigate('/ehr-view');
+      
+    } catch (error) {
+      console.error(error);
+      setError('Failed to load EHR data. Please try again.');
+    } finally {
+      setEhrLoading(false);
+    }
+  };
 
   const handleCloseAlert = () => {
     setError('');
@@ -249,7 +278,8 @@ const PatientDashboard = () => {
             gap: 1.5,
             width: isMobile ? '100%' : 'auto',
             justifyContent: isMobile ? 'space-between' : 'flex-end',
-            mt: isMobile ? 1 : 0
+            mt: isMobile ? 1 : 0,
+            flexWrap: isMobile ? 'wrap' : 'nowrap'
           }}>
             <Button
               variant="outlined"
@@ -260,7 +290,9 @@ const PatientDashboard = () => {
               fullWidth={isMobile}
               sx={{ 
                 borderRadius: 1.5,
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                minWidth: isMobile ? '100%' : 'auto',
+                mb: isMobile ? 1 : 0
               }}
             >
               View History
@@ -277,7 +309,8 @@ const PatientDashboard = () => {
                 sx={{ 
                   borderRadius: 1.5,
                   boxShadow: '0 2px 5px rgba(211, 47, 47, 0.3)',
-                  bgcolor: '#FF6B6B' // Changed color
+                  bgcolor: '#FF6B6B', // Changed color
+                  minWidth: isMobile ? '100%' : 'auto'
                 }}
               >
                 Revoke Access
@@ -294,7 +327,8 @@ const PatientDashboard = () => {
                 sx={{ 
                   borderRadius: 1.5,
                   boxShadow: '0 2px 5px rgba(46, 125, 50, 0.3)',
-                  bgcolor: '#4CAF50' // Changed color
+                  bgcolor: '#4CAF50', // Changed color
+                  minWidth: isMobile ? '100%' : 'auto'
                 }}
               >
                 {isPending ? 'Accept Request' : 'Activate Access'}
@@ -376,11 +410,62 @@ const PatientDashboard = () => {
       </AppBar>
       
       <Container maxWidth="lg" sx={{ mt: 12, mb: 6, flex: 1 }}>
+        {/*user ehr viewing option */}
+        <Card 
+          elevation={4} 
+          sx={{ 
+            borderRadius: 3, 
+            mb: 3, 
+            background: 'linear-gradient(135deg, #0B8A67 0%, #09B135 100%)',
+            overflow: 'hidden'
+          }}
+        >
+          <Box sx={{ 
+            p: 3, 
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+            <Box sx={{ mb: isMobile ? 2 : 0 }}>
+              <Typography variant="h5" component="h2" fontWeight={600} color="white">
+                Your Electronic Health Record
+              </Typography>
+              <Typography variant="body1" color="white" sx={{ mt: 1, opacity: 0.9 }}>
+                View your complete medical information and health history
+              </Typography>
+            </Box>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={viewEHR}
+              disabled={ehrLoading}
+              startIcon={ehrLoading ? <CircularProgress size={24} color="inherit" /> : <DescriptionIcon />}
+              sx={{
+                borderRadius: 2,
+                bgcolor: 'white',
+                color: '#0B8A67',
+                fontWeight: 600,
+                boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
+                px: 4,
+                py: 1.5,
+                '&:hover': {
+                  bgcolor: 'rgba(255,255,255,0.9)',
+                  boxShadow: '0 6px 20px rgba(0,0,0,0.25)'
+                }
+              }}
+            >
+              View EHR
+            </Button>
+          </Box>
+        </Card>
+
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <Card elevation={4} sx={{ borderRadius: 3, overflow: 'hidden' }}>
             <Box sx={{ 
               p: 2, 
-              background: "#09B135", // Changed from #09B135 to Cadet Blue
+              background: 'linear-gradient(135deg, #0B8A67 0%, #09B135 100%)',
               borderBottom: '1px solid',
               borderColor: 'divider'
             }}>
@@ -426,7 +511,7 @@ const PatientDashboard = () => {
                           label={acceptedDoctors.length} 
                           size="small" 
                           color="success" 
-                          sx={{ ml: 1, height: 20, minWidth: 20, fontSize: '0.7rem', bgcolor: '#09B135' }} // Changed chip color
+                          sx={{ ml: 1, height: 20, minWidth: 20, fontSize: '0.7rem', background: 'linear-gradient(135deg, #0B8A67 0%, #09B135 100%)'}} // Changed chip color
                         />
                       }
                     </Typography>
@@ -479,7 +564,7 @@ const PatientDashboard = () => {
                   <CardContent sx={{ p: 0 }}>
                     <Box sx={{ 
                       p: 3, 
-                      backgroundColor: '#09B135', // Changed from primary.main to Steel Blue
+                      background: 'linear-gradient(135deg, #0B8A67 0%, #09B135 100%)',
                       color: 'primary.contrastText',
                       display: 'flex',
                       alignItems: 'center',
@@ -504,7 +589,7 @@ const PatientDashboard = () => {
                   <CardContent sx={{ p: 0 }}>
                     <Box sx={{ 
                       p: 3, 
-                      backgroundColor: '#FDB159', // Changed from warning.main to Light Orange
+                      background: 'linear-gradient(90deg, #FDB159 0%, #FFD9A0 100%)',
                       color: 'warning.contrastText',
                       display: 'flex',
                       alignItems: 'center',
