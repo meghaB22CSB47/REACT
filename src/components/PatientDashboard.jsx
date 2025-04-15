@@ -23,6 +23,7 @@ import {
   useTheme,
   useMediaQuery
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import {
   Logout as LogoutIcon,
   Person as PersonIcon,
@@ -33,7 +34,8 @@ import {
   Refresh as RefreshIcon,
   AccessTime as PendingIcon,
   CheckCircleOutline as AcceptedIcon,
-  Dashboard as DashboardIcon
+  Dashboard as DashboardIcon,
+  AccountCircle as AccountCircleIcon
 } from '@mui/icons-material';
 import { logout } from '../utils/auth';
 
@@ -46,12 +48,18 @@ const PatientDashboard = () => {
   const [actionLoading, setActionLoading] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [username, setUsername] = useState('');
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetchDoctorData();
+    // Get username from localStorage
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
   }, []);
 
   const fetchDoctorData = async () => {
@@ -315,39 +323,56 @@ const PatientDashboard = () => {
         }}
       >
         <Toolbar>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <DoctorIcon sx={{ fontSize: 28, mr: 1 }} />
-                        <Typography variant="h5" component="div" fontWeight="600">
-                          HealthLink
-                        </Typography>
-            </Box>
-         
-            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-                        <Typography 
-                          variant="h6" 
-                          component="div" 
-                          sx={{ 
-                            fontWeight: 500,
-                            display: { xs: 'none', md: 'block' } 
-                          }}
-                        >
-                          Patient Dashboard
-                        </Typography>
-              </Box>
-            <Button 
-              color="inherit" 
-              onClick={handleLogout}
-              startIcon={<LogoutIcon />}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <DoctorIcon sx={{ fontSize: 28, mr: 1 }} />
+            <Typography variant="h5" component="div" fontWeight="600">
+              HealthLink
+            </Typography>
+          </Box>
+       
+          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+            <Typography 
+              variant="h6" 
+              component="div" 
               sx={{ 
-                borderRadius: 2,
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                }
+                fontWeight: 500,
+                display: { xs: 'none', md: 'block' } 
               }}
             >
-              Logout
-            </Button>
-          </Toolbar>
+              Patient Dashboard
+            </Typography>
+          </Box>
+          
+          {/* Username display */}
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center',
+            mr: 2,
+            px: 2,
+            py: 0.5,
+            borderRadius: 2,
+            bgcolor: alpha(theme.palette.common.white, 0.1)
+          }}>
+            <AccountCircleIcon sx={{ mr: 1, fontSize: 20 }} />
+            <Typography variant="body2" fontWeight="500">
+              {username || 'Patient'}
+            </Typography>
+          </Box>
+          
+          <Button 
+            color="inherit" 
+            onClick={handleLogout}
+            startIcon={<LogoutIcon />}
+            sx={{ 
+              borderRadius: 2,
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.1)'
+              }
+            }}
+          >
+            Logout
+          </Button>
+        </Toolbar>
       </AppBar>
       
       <Container maxWidth="lg" sx={{ mt: 12, mb: 6, flex: 1 }}>

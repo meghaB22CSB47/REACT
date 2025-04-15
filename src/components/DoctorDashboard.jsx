@@ -36,12 +36,14 @@ import {
   LocalHospital as DoctorIcon,
   Person as PatientIcon,
   Close as CloseIcon,
-  Dashboard as DashboardIcon
+  Dashboard as DashboardIcon,
+  AccountCircle as AccountCircleIcon
 } from '@mui/icons-material';
 import { logout } from '../utils/auth';
 
 const DoctorDashboard = () => {
   const theme = useTheme();
+  const [username, setUsername] = useState('');
   const [patients, setPatients] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -55,9 +57,14 @@ const DoctorDashboard = () => {
   const [ehrText, setEhrText] = useState('');
   const navigate = useNavigate();
 
-  // Fetch patients on component mount
+  // Fetch patients on component mount and get username
   useEffect(() => {
     fetchPatients();
+    // Get username from localStorage
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
   }, []);
 
   // Filter patients based on search term
@@ -225,6 +232,22 @@ const DoctorDashboard = () => {
             </Typography>
           </Box>
           
+          {/* Username display */}
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center',
+            mr: 2,
+            px: 2,
+            py: 0.5,
+            borderRadius: 2,
+            bgcolor: alpha(theme.palette.common.white, 0.1)
+          }}>
+            <AccountCircleIcon sx={{ mr: 1, fontSize: 20 }} />
+            <Typography variant="body2" fontWeight="500">
+              {username || 'Doctor'}
+            </Typography>
+          </Box>
+          
           <Button 
             color="inherit" 
             onClick={handleLogout}
@@ -245,7 +268,7 @@ const DoctorDashboard = () => {
       <Container maxWidth="lg" sx={{ mt: 12, mb: 6, flex: 1 }}>
         <Box sx={{ mb: 4 }}>
             <Typography variant="h4" fontWeight="600" gutterBottom align="center" >
-              Welcome, Doctor
+              Welcome Doctor
             </Typography>
             <Typography 
               variant="body1" align="center"
@@ -668,4 +691,3 @@ const DoctorDashboard = () => {
 };
 
 export default DoctorDashboard;
-
