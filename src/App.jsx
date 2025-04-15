@@ -18,7 +18,7 @@ import DoctorHistory from './components/DoctorHistory';
 import Home from './components/Home';
 import NotFound from './components/NotFound';
 import LoadingScreen from './components/LoadingScreen';
-
+import EHRView from './components/EHRViewerpat';
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
@@ -133,6 +133,15 @@ const App = () => {
                 <Navigate to="/login" replace />
             } 
           />
+          <Route 
+            path="/ehr" 
+            element={
+              authenticated ? 
+                <EHRView /> : 
+                <Navigate to="/login" replace />
+            } 
+          />
+
           <Route 
             path="/ehr/:patientId" 
             element={

@@ -124,6 +124,23 @@ const PatientDashboard = () => {
     window.location.href = '/login';
   };
 
+  const handleViewEHR = async () => {
+    try {
+      setEhrLoading(true);
+      const username = localStorage.getItem('username');
+      if (!username) {
+        setError('Username not found. Please log in again.');
+        return;
+      }
+      navigate('/ehr', { replace: true });
+    } catch (error) {
+      console.error(error);
+      setError('Failed to load EHR data. Please try again.');
+    } finally {
+      setEhrLoading(false);
+    }
+  };
+
   const handleAction = async (action, doctorId, isPending = false) => {
     if (!doctorId) {
       setError('Doctor ID is missing. Please try again.');
@@ -164,33 +181,6 @@ const PatientDashboard = () => {
 
   const viewHistory = (doctorId) => {
     navigate(`/history/${doctorId}`);
-  };
-// {this is the function}
-  const viewEHR = async () => {
-    try {
-      setEhrLoading(true);
-      const response = await fetch('http://localhost:8080/fabric/patient/view-ehr', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-        }
-      });
-
-      if (!response.ok) throw new Error("Failed to fetch EHR data");
-      
-      // Handle the EHR data as needed
-      const ehrData = await response.json();
-      console.log("EHR Data:", ehrData);
-      
-      localStorage.setItem('ehrData', JSON.stringify(ehrData));
-      navigate('/ehr-view');
-      
-    } catch (error) {
-      console.error(error);
-      setError('Failed to load EHR data. Please try again.');
-    } finally {
-      setEhrLoading(false);
-    }
   };
 
   const handleCloseAlert = () => {
@@ -439,7 +429,7 @@ const PatientDashboard = () => {
               variant="contained"
               color="primary"
               size="large"
-              onClick={viewEHR}
+              onClick={handleViewEHR}
               disabled={ehrLoading}
               startIcon={ehrLoading ? <CircularProgress size={24} color="inherit" /> : <DescriptionIcon />}
               sx={{
