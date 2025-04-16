@@ -164,7 +164,7 @@ const PatientDashboard = () => {
           ? 'accepted'
           : status === 'Rejected'
           ? 'rejected'
-          : status === 'Revoke'
+          : status === 'Revoked'
           ? 'revoked'
           : status === 'Activate'
           ? 'activated'
@@ -293,7 +293,7 @@ const PatientDashboard = () => {
                 color="error"
                 size={isMobile ? "medium" : "small"}
                 startIcon={actionLoading === doctor.did ? <CircularProgress size={20} color="inherit" /> : <CloseIcon />}
-                onClick={() => handleAction('Revoke', doctor.did)}
+                onClick={() => handleAction('Revoked', doctor.did)}
                 disabled={!!actionLoading}
                 fullWidth={isMobile}
                 sx={{ 

@@ -41,7 +41,8 @@ import {
   Dashboard as DashboardIcon,
   AccountCircle as AccountCircleIcon,
   CheckCircle as AcceptedIcon,
-  Pending as PendingIcon
+  Pending as PendingIcon,
+  Refresh as RefreshIcon
 } from '@mui/icons-material';
 import { logout } from '../utils/auth';
 
@@ -51,6 +52,7 @@ const DoctorDashboard = () => {
   const [patients, setPatients] = useState([]);
   const [acceptedPatients, setAcceptedPatients] = useState([]);
   const [pendingPatients, setPendingPatients] = useState([]);
+  const [revokedPatients, setRevokedPatients] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
@@ -83,14 +85,20 @@ const DoctorDashboard = () => {
           patient.pid.toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
-    } else {
+    } else if (tabValue === 1) {
       setFilteredPatients(
         pendingPatients.filter(patient => 
           patient.pid.toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
+    } else {
+      setFilteredPatients(
+        revokedPatients.filter(patient => 
+          patient.pid.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
     }
-  }, [searchTerm, tabValue, acceptedPatients, pendingPatients]);
+  }, [searchTerm, tabValue, acceptedPatients, pendingPatients, revokedPatients]);
 
   const fetchPatients = async () => {
     setLoading(true);
@@ -135,11 +143,21 @@ const DoctorDashboard = () => {
       const pending = data.filter(request => request.status === 'Requested')
         .map(request => ({ pid: request.pid, requestId: request.requestId }));
       
+      const revoked = data.filter(request => request.status === 'Revoked')
+        .map(request => ({ pid: request.pid, requestId: request.requestId }));
+      
       setAcceptedPatients(accepted);
       setPendingPatients(pending);
+      setRevokedPatients(revoked);
       
       // Set filtered patients based on current tab
-      setFilteredPatients(tabValue === 0 ? accepted : pending);
+      if (tabValue === 0) {
+        setFilteredPatients(accepted);
+      } else if (tabValue === 1) {
+        setFilteredPatients(pending);
+      } else {
+        setFilteredPatients(revoked);
+      }
     } catch (error) {
       console.error('Error:', error);
       setError('Failed to load patient requests. Please try again.');
@@ -188,6 +206,28 @@ const DoctorDashboard = () => {
     } catch (error) {
       console.error('Error:', error);
       setError(`Failed to add request for patient ${patientId}`);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleResendRequest = async (patientId) => {
+    setUpdating(true);
+    try {
+      const response = await fetch(`http://localhost:8080/fabric/doctor/add-request?pid=${patientId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+        }
+      });
+
+      if (!response.ok) throw new Error('Failed to resend request');
+      setSuccess(`Request for patient ${patientId} sent successfully!`);
+      fetchPatientRequests();
+    } catch (error) {
+      console.error('Error:', error);
+      setError(`Failed to resend request for patient ${patientId}`);
     } finally {
       setUpdating(false);
     }
@@ -245,10 +285,10 @@ const DoctorDashboard = () => {
     setTabValue(newValue);
   };
 
-  const renderPatientList = (patients, isPending = false) => {
+  const renderPatientList = (patients, isPending = false, isRevoked = false) => {
     if (patients.length === 0) {
       return (
-        <Grid item xs={12}> {/* Wrap in Grid item for proper alignment */}
+        <Grid item xs={12}>
           <Paper 
             sx={{ 
               p: 5, 
@@ -256,14 +296,15 @@ const DoctorDashboard = () => {
               bgcolor: alpha(theme.palette.primary.light, 0.05),
               border: `1px dashed ${alpha(theme.palette.primary.main, 0.3)}`,
               borderRadius: 3,
-              width: '100%' /* Ensure full width */
+              width: '100%'
             }}
           >
             <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-              No {isPending ? 'pending' : 'accepted'} patients found
+              No {isRevoked ? 'revoked' : (isPending ? 'pending' : 'accepted')} patients found
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {isPending ? 'Wait for patient approval or add new requests' : 'Add a patient request to get started'}
+              {isRevoked ? 'You don\'t have any revoked patient permissions' : 
+                (isPending ? 'Wait for patient approval or add new requests' : 'Add a patient request to get started')}
             </Typography>
           </Paper>
         </Grid>
@@ -293,12 +334,16 @@ const DoctorDashboard = () => {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Avatar 
               sx={{ 
-                bgcolor: isPending 
-                  ? alpha(theme.palette.warning.main, 0.1)
-                  : alpha(theme.palette.info.main, 0.1), 
-                color: isPending 
-                  ? theme.palette.warning.main
-                  : theme.palette.info.main,
+                bgcolor: isRevoked
+                  ? alpha(theme.palette.error.main, 0.1)
+                  : (isPending 
+                    ? alpha(theme.palette.warning.main, 0.1)
+                    : alpha(theme.palette.info.main, 0.1)), 
+                color: isRevoked
+                  ? theme.palette.error.main
+                  : (isPending 
+                    ? theme.palette.warning.main
+                    : theme.palette.info.main),
                 width: 50, 
                 height: 50,
                 mr: 2
@@ -313,8 +358,8 @@ const DoctorDashboard = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
                 <Chip 
                   size="small" 
-                  label={isPending ? "Pending" : "Active"} 
-                  color={isPending ? "warning" : "success"} 
+                  label={isRevoked ? "Revoked" : (isPending ? "Pending" : "Active")} 
+                  color={isRevoked ? "error" : (isPending ? "warning" : "success")} 
                   sx={{ 
                     borderRadius: 1,
                     fontWeight: 500
@@ -332,7 +377,7 @@ const DoctorDashboard = () => {
           </Box>
           
           <Box sx={{ display: 'flex', gap: 2 }}>
-            {!isPending && (
+            {!isPending && !isRevoked && (
               <Button
                 variant="outlined"
                 color="primary"
@@ -350,13 +395,21 @@ const DoctorDashboard = () => {
                 View EHR
               </Button>
             )}
-            {/* {!isPending && (
+            {isPending && (
+              <Chip 
+                label="Awaiting Approval" 
+                color="warning" 
+                sx={{ fontWeight: 500 }}
+              />
+            )}
+            {isRevoked && (
               <Button
                 variant="contained"
                 color="primary"
                 size="medium"
-                startIcon={<EditIcon />}
-                onClick={() => handleOpenUpdateDialog(patient)}
+                startIcon={<RefreshIcon />}
+                onClick={() => handleResendRequest(patient.pid)}
+                disabled={updating}
                 sx={{ 
                   borderRadius: 2,
                   px: 2,
@@ -366,15 +419,8 @@ const DoctorDashboard = () => {
                   }
                 }}
               >
-                Update EHR
+                {updating ? <CircularProgress size={20} color="inherit" /> : 'Send Request'}
               </Button>
-            )} */}
-            {isPending && (
-              <Chip 
-                label="Awaiting Approval" 
-                color="warning" 
-                sx={{ fontWeight: 500 }}
-              />
             )}
           </Box>
         </Paper>
@@ -623,6 +669,11 @@ const DoctorDashboard = () => {
                     iconPosition="start" 
                     label={`Pending (${pendingPatients.length})`} 
                   />
+                  <Tab 
+                    icon={<CloseIcon />} 
+                    iconPosition="start" 
+                    label={`Revoked (${revokedPatients.length})`} 
+                  />
                 </Tabs>
               </Box>
               
@@ -638,7 +689,7 @@ const DoctorDashboard = () => {
                         <CardContent sx={{ p: 0 }}>
                           <Box sx={{ 
                             p: 3, 
-                            background: 'linear-gradient(90deg, #043B89 0%, #0A4DAA 100%)', // Add primary color gradient
+                            background: 'linear-gradient(90deg, #043B89 0%, #0A4DAA 100%)',
                             color: 'primary.contrastText',
                             display: 'flex',
                             alignItems: 'center',
@@ -677,6 +728,31 @@ const DoctorDashboard = () => {
                           <Box sx={{ p: 3 }}>
                             <Grid container spacing={2.5}>
                               {renderPatientList(filteredPatients, true)}
+                            </Grid>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {tabValue === 2 && (
+                      <Card elevation={0} sx={{ borderRadius: 3, overflow: 'hidden' }}>
+                        <CardContent sx={{ p: 0 }}>
+                          <Box sx={{ 
+                            p: 3, 
+                            background: 'linear-gradient(90deg, #E57373 0%, #EF9A9A 100%)',
+                            color: 'error.contrastText',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1.5
+                          }}>
+                            <CloseIcon />
+                            <Typography variant="h6" fontWeight={600}>
+                              Revoked Access ({revokedPatients.length})
+                            </Typography>
+                          </Box>
+                          <Box sx={{ p: 3 }}>
+                            <Grid container spacing={2.5}>
+                              {renderPatientList(filteredPatients, false, true)}
                             </Grid>
                           </Box>
                         </CardContent>
