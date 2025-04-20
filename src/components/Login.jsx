@@ -74,11 +74,11 @@ const Login = () => {
         {/* Left Side - Branding */}
         <div className="col-md-6 d-none d-md-flex flex-column align-items-center justify-content-center text-white p-4">
           <div className="text-center">
-            <FaHeartbeat className="mb-3" style={{ fontSize: '2.5rem' }} />
-            <h1 className="fw-bold mb-2" style={{ fontSize: '1.5rem' }}>HealthLink</h1>
-            <h4 className="mb-2" style={{ fontSize: '1.1rem', fontWeight: 500 }}>Secure blockchain-based EHR system</h4>
+            <FaHeartbeat className="mb-3" style={{ fontSize: '3rem' }} />
+            <h1 className="fw-bold mb-2" style={{ fontSize: '2rem' }}>HealthLink</h1>
+            <h4 className="mb-2" style={{ fontSize: '1.3rem', fontWeight: 500 }}>Secure blockchain-based EHR system</h4>
             
-            <p className="mb-3 opacity-75" style={{ fontSize: '0.9rem' }}>
+            <p className="mb-3 opacity-75" style={{ fontSize: '1.1rem' }}>
               Empowering patients with control over their health data while enabling 
               secure collaboration between healthcare providers.
             </p>
@@ -86,16 +86,16 @@ const Login = () => {
             <div className="p-2 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
               <div className="row g-0 text-center">
                 <div className="col-4 p-2">
-                  <h5 className="fw-bold mb-0" style={{ fontSize: '0.9rem' }}>100%</h5>
-                  <small style={{ fontSize: '0.7rem' }}>Secure</small>
+                  <h5 className="fw-bold mb-0" style={{ fontSize: '1.1rem' }}>100%</h5>
+                  <small style={{ fontSize: '0.9rem' }}>Secure</small>
                 </div>
                 <div className="col-4 p-2 border-start border-end" style={{ borderColor: 'rgba(255,255,255,0.3)' }}>
-                  <h5 className="fw-bold mb-0" style={{ fontSize: '0.9rem' }}>Private</h5>
-                  <small style={{ fontSize: '0.7rem' }}>Control</small>
+                  <h5 className="fw-bold mb-0" style={{ fontSize: '1.1rem' }}>Private</h5>
+                  <small style={{ fontSize: '0.9rem' }}>Control</small>
                 </div>
                 <div className="col-4 p-2">
-                  <h5 className="fw-bold mb-0" style={{ fontSize: '0.9rem' }}>Trusted</h5>
-                  <small style={{ fontSize: '0.7rem' }}>Blockchain</small>
+                  <h5 className="fw-bold mb-0" style={{ fontSize: '1.1rem' }}>Trusted</h5>
+                  <small style={{ fontSize: '0.9rem' }}>Blockchain</small>
                 </div>
               </div>
             </div>
@@ -115,8 +115,8 @@ const Login = () => {
                 <h2 className="fw-bold" style={{ fontSize: '1.5rem', color: '#3498DB' }}>HealthLink</h2>
               </div>
               
-              <h2 className="fw-bold mb-2 text-dark" style={{ fontSize: '1.5rem' }}>Sign In</h2>
-              <p className="text-muted mb-3" style={{ fontSize: '0.9rem' }}>Enter your credentials to access your account</p>
+              <h2 className="fw-bold mb-2 text-dark" style={{ fontSize: '2rem' }}>Sign In</h2>
+              <p className="text-muted mb-3" style={{ fontSize: '1.1rem' }}>Enter your credentials to access your account</p>
               
               {error && (
                 <div className="alert alert-danger py-1 px-2 mb-2" role="alert" style={{ fontSize: '0.85rem' }}>
